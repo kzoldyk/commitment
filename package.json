@@ -1,0 +1,51 @@
+{
+  "name": "commitment",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "server": "bun src/server/dev-server.ts",
+    "start": "bun src/server/dev-server.ts",
+    "build": "vite build",
+    "test": "bun test src/tests",
+    "test:e2e": "playwright test",
+    "db:migrate": "bun src/server/db/migrate.ts",
+    "db:seed": "bun src/server/db/seed.ts",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.8",
+    "better-sqlite3": "^11.8.1",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "date-fns-tz": "^3.2.0",
+    "drizzle-orm": "^0.39.3",
+    "hono": "^4.7.1",
+    "lucide-react": "^0.475.0",
+    "nodemailer": "^10.0.10",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.2.0",
+    "tailwind-merge": "^3.0.2"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260925.1",
+    "@playwright/test": "^1.63.0",
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/node": "^22.13.4",
+    "@types/nodemailer": "^8.0.2",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "drizzle-kit": "^0.30.4",
+    "postcss": "^8.5.2",
+    "tailwindcss": "^3.4.17",
+    "tsx": "^4.19.3",
+    "typescript": "^5.7.3",
+    "vite": "^6.1.0",
+    "vitest": "^3.0.5",
+    "wrangler": "^4.139.0"
+  }
+}

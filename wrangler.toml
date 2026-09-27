@@ -1,0 +1,27 @@
+name = "commitment"
+main = "src/server/index.ts"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+html_handling = "auto-trailing-slash"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "commitment-db"
+database_id = "abe299d2-859e-41f5-961b-acde496dceea"
+migrations_dir = "./drizzle"
+
+[triggers]
+crons = [
+  "30 17 * * *", # 11:00 PM IST Daily Reminder (17:30 UTC)
+  "30 18 * * *", # 12:00 AM IST Midnight Evaluation (18:30 UTC)
+  "0 0 * * *",   # 12:00 AM UTC Midnight Evaluation (00:00 UTC)
+]
+
+[vars]
+ENVIRONMENT = "production"
+EMAIL_FROM = "Commitment <zoldyk390@gmail.com>"
