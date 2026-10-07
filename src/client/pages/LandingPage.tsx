@@ -14,9 +14,19 @@ export const LandingPage: React.FC = () => {
       {/* Background Ambient Radial Glow */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-rose-500/10 blur-[150px] -z-10 pointer-events-none rounded-full" />
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-12 pb-24 flex flex-col items-center text-center">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-10 pb-24 flex flex-col items-center text-center">
+        {/* Wax Seal Logo Emblem */}
+        <div className="mb-6 relative group">
+          <div className="absolute inset-0 bg-rose-500/20 blur-2xl rounded-full scale-125 pointer-events-none group-hover:scale-150 transition-transform" />
+          <img
+            src="/logo-mark.png"
+            alt="Commitment Wax Seal"
+            className="w-20 h-20 sm:w-24 sm:h-24 object-contain relative drop-shadow-[0_8px_24px_rgba(225,29,72,0.5)] transition-transform duration-300 group-hover:scale-105"
+          />
+        </div>
+
         {/* macOS Pill Badge */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-black/10 dark:border-white/10 bg-white/80 dark:bg-neutral-900/90 text-xs font-mono text-neutral-600 dark:text-neutral-300 mb-8 shadow-sm backdrop-blur-md">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-black/10 dark:border-white/10 bg-white/80 dark:bg-neutral-900/90 text-xs font-mono text-neutral-600 dark:text-neutral-300 mb-6 shadow-sm backdrop-blur-md">
           <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
           <span>commitment v1.0 · digital accountability engine</span>
         </div>

@@ -29,7 +29,7 @@ export interface CreateCommitmentInput {
 export class CommitmentService {
   constructor(private notificationService: NotificationService = new NotificationService()) {}
 
-  async create(db: DatabaseInstance, input: CreateCommitmentInput) {
+  async create(db: DatabaseInstance, input: CreateCommitmentInput, env?: any) {
     const [creator] = await db
       .select()
       .from(schema.users)
@@ -132,7 +132,11 @@ export class CommitmentService {
     });
 
     // Immediately trigger outbox processing so email sends in real time
-    await this.notificationService.processOutbox(db);
+    try {
+      await this.notificationService.processOutbox(db, 20, env);
+    } catch (err) {
+      console.error('Failed to process notification outbox on create:', err);
+    }
 
     return this.getById(db, commitmentId, input.creatorId);
   }
@@ -156,7 +160,8 @@ export class CommitmentService {
       restoreEnabled?: boolean;
       restoreAfterSuccessDays?: number;
       restoreLives?: number;
-    }
+    },
+    env?: any
   ) {
     const commitment = await this.getRawById(db, commitmentId);
     if (!commitment) throw new Error('Commitment not found');
@@ -228,18 +233,27 @@ export class CommitmentService {
       .where(eq(schema.commitmentRules.commitmentId, commitmentId));
 
     if (newPartnerId !== commitment.partnerId) {
-      await this.notificationService.processOutbox(db);
+      try {
+        await this.notificationService.processOutbox(db, 20, env);
+      } catch (err) {
+        console.error('Failed to process notification outbox on updatePending:', err);
+      }
     }
 
     return this.getById(db, commitmentId, creatorUserId);
   }
 
-  async accept(db: DatabaseInstance, commitmentId: string, partnerUserId: string) {
+  async accept(db: DatabaseInstance, commitmentId: string, partnerUserId: string, env?: any) {
     const commitment = await this.getRawById(db, commitmentId);
     if (!commitment) throw new Error('Commitment not found');
 
     if (commitment.partnerId !== partnerUserId) {
       throw new Error('Only the assigned accountability partner can accept this commitment');
+    }
+
+    // Idempotent: If contract was already accepted, return it without error
+    if (commitment.status === 'ACTIVE') {
+      return this.getById(db, commitmentId, partnerUserId);
     }
 
     if (commitment.status !== 'PENDING_ACCEPTANCE') {
@@ -255,19 +269,25 @@ export class CommitmentService {
 
     const now = nowUtc();
 
-    // Generate daily periods
-    const periods = generatePeriods(
-      commitment.startDate,
-      commitment.endDate,
-      commitment.timezone,
-      rule.frequencyType as any,
-      rule.cutoffTime,
-      rule.evaluationDelayMinutes
-    );
+    // Check if days were already generated to prevent duplicate key errors
+    const existingDays = await db
+      .select({ id: schema.commitmentDays.id })
+      .from(schema.commitmentDays)
+      .where(eq(schema.commitmentDays.commitmentId, commitmentId))
+      .limit(1);
 
-    // Insert all commitment days
-    for (const p of periods) {
-      await db.insert(schema.commitmentDays).values({
+    if (existingDays.length === 0) {
+      // Generate daily periods
+      const periods = generatePeriods(
+        commitment.startDate,
+        commitment.endDate,
+        commitment.timezone,
+        rule.frequencyType as any,
+        rule.cutoffTime,
+        rule.evaluationDelayMinutes
+      );
+
+      const dayRows = periods.map((p) => ({
         id: generateId(),
         commitmentId,
         periodKey: p.periodKey,
@@ -276,22 +296,53 @@ export class CommitmentService {
         evaluationAt: p.evaluationAt,
         targetValue: rule.targetValue,
         completedValue: 0,
-        status: 'PENDING',
-        proofStatus: 'NONE',
+        status: 'PENDING' as const,
+        proofStatus: 'NONE' as const,
         createdAt: now,
         updatedAt: now,
-      });
+      }));
+
+      // Chunk inserts (7 rows per chunk = 84 bound variables <= 100 limit in Cloudflare D1)
+      const CHUNK_SIZE = 7;
+      const chunks: typeof dayRows[] = [];
+      for (let i = 0; i < dayRows.length; i += CHUNK_SIZE) {
+        chunks.push(dayRows.slice(i, i + CHUNK_SIZE));
+      }
+
+      if (typeof db.batch === 'function') {
+        const batchStatements = chunks.map((chunk) =>
+          db.insert(schema.commitmentDays).values(chunk)
+        );
+        await db.batch(batchStatements);
+      } else {
+        for (const chunk of chunks) {
+          await db.insert(schema.commitmentDays).values(chunk);
+        }
+      }
     }
 
-    // Initial life transaction
-    await db.insert(schema.lifeTransactions).values({
-      id: generateId(),
-      commitmentId,
-      amount: rule.initialLives,
-      type: 'INITIAL',
-      reason: 'Contract initialized with starting lives',
-      createdAt: now,
-    });
+    // Check if initial life transaction already exists
+    const [existingTx] = await db
+      .select({ id: schema.lifeTransactions.id })
+      .from(schema.lifeTransactions)
+      .where(
+        and(
+          eq(schema.lifeTransactions.commitmentId, commitmentId),
+          eq(schema.lifeTransactions.type, 'INITIAL')
+        )
+      )
+      .limit(1);
+
+    if (!existingTx) {
+      await db.insert(schema.lifeTransactions).values({
+        id: generateId(),
+        commitmentId,
+        amount: rule.initialLives,
+        type: 'INITIAL',
+        reason: 'Contract initialized with starting lives',
+        createdAt: now,
+      });
+    }
 
     // Update commitment status to ACTIVE
     await db
@@ -314,19 +365,23 @@ export class CommitmentService {
       createdAt: now,
     });
 
-    // Notify creator
-    const [partner] = await db.select().from(schema.users).where(eq(schema.users.id, partnerUserId));
-    await this.notificationService.queueEvent(db, {
-      userId: commitment.creatorId,
-      commitmentId,
-      type: 'COMMITMENT_ACCEPTED',
-      payload: {
-        partnerName: partner?.displayName || 'Partner',
-        title: commitment.title,
-      },
-    });
+    // Notify creator & dispatch outbox safely
+    try {
+      const [partner] = await db.select().from(schema.users).where(eq(schema.users.id, partnerUserId));
+      await this.notificationService.queueEvent(db, {
+        userId: commitment.creatorId,
+        commitmentId,
+        type: 'COMMITMENT_ACCEPTED',
+        payload: {
+          partnerName: partner?.displayName || 'Partner',
+          title: commitment.title,
+        },
+      });
 
-    await this.notificationService.processOutbox(db);
+      await this.notificationService.processOutbox(db, 20, env);
+    } catch (err) {
+      console.error('Failed to process notification outbox on accept:', err);
+    }
 
     return this.getById(db, commitmentId, partnerUserId);
   }
@@ -464,15 +519,25 @@ export class CommitmentService {
 
     let daysWithProofs = days.map((day: any) => ({ ...day, proofs: [] as any[] }));
     if (days.length > 0) {
-      const proofs = await db
-        .select()
+      const proofsRows = await db
+        .select({
+          id: schema.proofs.id,
+          commitmentDayId: schema.proofs.commitmentDayId,
+          type: schema.proofs.type,
+          value: schema.proofs.value,
+          metadata: schema.proofs.metadata,
+          submittedBy: schema.proofs.submittedBy,
+          submittedAt: schema.proofs.submittedAt,
+          status: schema.proofs.status,
+        })
         .from(schema.proofs)
-        .where(inArray(schema.proofs.commitmentDayId, days.map((d: any) => d.id)))
+        .innerJoin(schema.commitmentDays, eq(schema.proofs.commitmentDayId, schema.commitmentDays.id))
+        .where(eq(schema.commitmentDays.commitmentId, commitmentId))
         .orderBy(schema.proofs.submittedAt);
         
       daysWithProofs = days.map((day: any) => ({
         ...day,
-        proofs: proofs.filter((p: any) => p.commitmentDayId === day.id)
+        proofs: proofsRows.filter((p: any) => p.commitmentDayId === day.id)
       }));
     }
 

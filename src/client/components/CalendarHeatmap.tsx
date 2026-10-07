@@ -53,10 +53,10 @@ export const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ days, targetUn
           return (
             <button
               key={day.id}
-              disabled={isFuture || isMissed || isCompleted}
+              disabled={isFuture}
               onClick={() => !isFuture && onSelectDay?.(day)}
-              className={`flex flex-col items-center justify-between p-2 rounded-lg border text-center transition-all select-none ${isFuture ? 'cursor-not-allowed' : 'cursor-pointer'} ${bgClass}`}
-              title={isFuture ? `Locked: Starts on ${day.periodKey}` : `${day.periodKey}: ${day.completedValue}/${day.targetValue} ${targetUnit} (${day.status})`}
+              className={`flex flex-col items-center justify-between p-2 rounded-lg border text-center transition-all select-none ${isFuture ? 'cursor-not-allowed' : 'cursor-pointer hover:scale-105 active:scale-95 shadow-sm'} ${bgClass}`}
+              title={isFuture ? `Locked: Starts on ${day.periodKey}` : `${day.periodKey}: ${day.completedValue}/${day.targetValue} ${targetUnit} (${day.status}) - Click to inspect`}
             >
               <span className="text-[10px] font-mono font-medium opacity-80">{dateNumber}</span>
               <div className="my-1 flex items-center justify-center h-4">

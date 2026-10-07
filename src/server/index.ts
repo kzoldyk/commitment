@@ -150,7 +150,7 @@ app.post('/api/commitments', requireAuth, async (c) => {
     const commitment = await commitmentService.create(db, {
       ...body,
       creatorId: user.id,
-    });
+    }, c.env);
     return c.json({ commitment }, 201);
   } catch (err: any) {
     return c.json({ error: { code: 'CREATE_COMMITMENT_FAILED', message: err.message } }, 400);
@@ -182,7 +182,7 @@ app.patch('/api/commitments/:id', requireAuth, async (c) => {
   const id = c.req.param('id');
   try {
     const body = await c.req.json();
-    const commitment = await commitmentService.updatePending(db, id, user.id, body);
+    const commitment = await commitmentService.updatePending(db, id, user.id, body, c.env);
     return c.json({ commitment });
   } catch (err: any) {
     return c.json({ error: { code: 'UPDATE_FAILED', message: err.message } }, 400);
@@ -194,7 +194,7 @@ app.post('/api/commitments/:id/accept', requireAuth, async (c) => {
   const db = c.get('db');
   const id = c.req.param('id');
   try {
-    const commitment = await commitmentService.accept(db, id, user.id);
+    const commitment = await commitmentService.accept(db, id, user.id, c.env);
     return c.json({ commitment });
   } catch (err: any) {
     return c.json({ error: { code: 'ACCEPT_FAILED', message: err.message } }, 400);

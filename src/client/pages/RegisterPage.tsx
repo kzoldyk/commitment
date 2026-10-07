@@ -8,10 +8,14 @@ export const RegisterPage: React.FC = () => {
   const { register } = useAuth();
   const navigate = useNavigate();
 
+  const searchParams = new URLSearchParams(window.location.search);
+  const queryEmail = searchParams.get('email') || '';
+  const inviteId = searchParams.get('invite') || '';
+
   const detectedTz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
 
   const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(queryEmail);
   const [displayName, setDisplayName] = useState('');
   const [password, setPassword] = useState('');
   const [timezone, setTimezone] = useState(detectedTz);
@@ -32,7 +36,11 @@ export const RegisterPage: React.FC = () => {
         displayName: displayName.trim() || username.trim(),
         timezone,
       });
-      navigate('/dashboard');
+      if (inviteId) {
+        navigate(`/commitments/${inviteId}`);
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err: any) {
       setError(err.message || 'Registration failed');
     } finally {
@@ -45,12 +53,19 @@ export const RegisterPage: React.FC = () => {
       <div className="w-full max-w-md">
         <MacWindow title="create_account.app">
           <div className="text-center mb-6">
-            <div className="w-9 h-9 rounded-lg bg-rose-600 flex items-center justify-center text-white font-black text-sm mx-auto mb-2 shadow-[0_0_15px_rgba(225,29,72,0.4)]">
-              C
+            <div className="w-12 h-12 mx-auto mb-2.5 flex items-center justify-center drop-shadow-[0_4px_16px_rgba(225,29,72,0.45)]">
+              <img src="/logo-mark.png" alt="Commitment Seal" className="w-12 h-12 object-contain" />
             </div>
             <h2 className="text-xl font-bold text-neutral-900 dark:text-white tracking-tight">create account</h2>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 font-mono mt-0.5">join the digital accountability network</p>
           </div>
+
+          {inviteId && (
+            <div className="mb-5 p-3 rounded-xl bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-800/80 text-amber-900 dark:text-amber-200 text-xs flex items-center gap-2">
+              <AlertCircle size={15} className="shrink-0 text-amber-600 dark:text-amber-400" />
+              <span>You have been invited to enforce an accountability contract. Create your account to review and accept it.</span>
+            </div>
+          )}
 
           {error && (
             <div className="mb-5 p-3 rounded-xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800/80 text-rose-800 dark:text-rose-300 text-xs flex items-center gap-2">

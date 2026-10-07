@@ -35,9 +35,9 @@ export const Navbar: React.FC = () => {
         {/* Left: macOS Brand & Menus */}
         <div className="flex items-center gap-4 sm:gap-6">
           <Link to={user ? "/dashboard" : "/"} className="flex items-center gap-2 group">
-            {/* Apple / Commitment Icon */}
-            <div className="w-5 h-5 rounded-md bg-rose-600 flex items-center justify-center text-white font-black text-xs shadow-[0_0_10px_rgba(225,29,72,0.5)] group-hover:scale-105 transition-transform">
-              C
+            {/* Wax Seal Logo Mark */}
+            <div className="w-5 h-5 flex items-center justify-center group-hover:scale-110 transition-transform drop-shadow-[0_2px_8px_rgba(225,29,72,0.4)]">
+              <img src="/logo-mark.png" alt="Commitment Seal" className="w-5 h-5 object-contain" />
             </div>
             <span className="font-bold text-neutral-900 dark:text-white tracking-tight">commitment</span>
           </Link>

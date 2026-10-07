@@ -32,6 +32,10 @@ export class AuthService {
     if (existing.length > 0) {
       const match = existing.find((u: typeof schema.users.$inferSelect) => u.email === cleanEmail);
       if (match && match.status === 'INVITED') {
+        if (existing.some((u: typeof schema.users.$inferSelect) => u.username === cleanUsername && u.id !== match.id)) {
+          throw new Error('Username is already taken. Please choose another username.');
+        }
+
         // Claim the invited account!
         const passwordHash = await hashPassword(data.password);
         const now = nowUtc();

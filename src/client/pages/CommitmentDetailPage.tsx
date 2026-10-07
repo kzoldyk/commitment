@@ -16,6 +16,7 @@ export const CommitmentDetailPage: React.FC = () => {
 
   const [commitment, setCommitment] = useState<Commitment | null>(null);
   const [loading, setLoading] = useState(true);
+  const [accepting, setAccepting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Selected Day for Proof Modal
@@ -39,12 +40,16 @@ export const CommitmentDetailPage: React.FC = () => {
   }, [id]);
 
   const handleAccept = async () => {
-    if (!id) return;
+    if (!id || accepting) return;
     try {
+      setAccepting(true);
       await api.acceptCommitment(id);
-      loadCommitment();
+      await loadCommitment();
     } catch (err: any) {
       alert(err.message || 'Failed to accept commitment');
+      await loadCommitment();
+    } finally {
+      setAccepting(false);
     }
   };
 
@@ -122,11 +127,16 @@ export const CommitmentDetailPage: React.FC = () => {
         }
       >
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-neutral-900 dark:text-white tracking-tight">{commitment.title}</h1>
-            {commitment.description && (
-              <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1 max-w-xl font-sans leading-relaxed">{commitment.description}</p>
-            )}
+          <div className="flex items-start gap-3.5">
+            <div className="w-10 h-10 shrink-0 mt-0.5 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center drop-shadow-[0_2px_8px_rgba(225,29,72,0.3)]">
+              <img src="/logo-mark.png" alt="Contract Seal" className="w-7 h-7 object-contain" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-neutral-900 dark:text-white tracking-tight">{commitment.title}</h1>
+              {commitment.description && (
+                <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1 max-w-xl font-sans leading-relaxed">{commitment.description}</p>
+              )}
+            </div>
           </div>
 
           <div className="flex items-center gap-4">
@@ -192,11 +202,14 @@ export const CommitmentDetailPage: React.FC = () => {
             <div className="flex items-center gap-3">
               <button
                 onClick={handleAccept}
-                className="mac-btn-primary px-4 py-2 rounded-xl text-white font-semibold text-xs flex items-center gap-1.5 cursor-pointer"
+                disabled={accepting}
+                className={`mac-btn-primary px-4 py-2 rounded-xl text-white font-semibold text-xs flex items-center gap-1.5 cursor-pointer ${
+                  accepting ? 'opacity-50 pointer-events-none' : ''
+                }`}
               >
                 <div className="mac-gloss" />
                 <Check size={13} />
-                <span>accept contract</span>
+                <span>{accepting ? 'accepting...' : 'accept contract'}</span>
               </button>
               <button
                 onClick={handleDecline}
@@ -263,9 +276,7 @@ export const CommitmentDetailPage: React.FC = () => {
               if (nowSec < day.periodStart) {
                 return;
               }
-              if (isCreator && (day.status === 'IN_PROGRESS' || day.status === 'PENDING')) {
-                setSelectedDay(day);
-              }
+              setSelectedDay(day);
             }}
           />
         </MacWindow>
@@ -280,16 +291,26 @@ export const CommitmentDetailPage: React.FC = () => {
               .map(day => (
                 <div key={day.id} className="py-3">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold text-neutral-900 dark:text-white font-mono">{day.periodKey}</span>
+                    <button
+                      onClick={() => setSelectedDay(day)}
+                      className="text-xs font-bold text-neutral-900 dark:text-white font-mono hover:text-rose-600 dark:hover:text-rose-400 flex items-center gap-1.5 transition-colors cursor-pointer"
+                    >
+                      <span>{day.periodKey}</span>
+                      <span className="text-[10px] font-normal opacity-60">· click to inspect</span>
+                    </button>
                     <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono font-medium tracking-tighter">
                       Progress: {day.completedValue} / {day.targetValue} {commitment.rule?.targetUnit}
                     </span>
                   </div>
                   <div className="space-y-2">
                     {day.proofs?.map(proof => (
-                      <div key={proof.id} className="bg-neutral-100 dark:bg-neutral-900/60 rounded-lg p-2.5 text-xs font-mono">
+                      <div
+                        key={proof.id}
+                        onClick={() => setSelectedDay(day)}
+                        className="bg-neutral-100 dark:bg-neutral-900/60 hover:bg-neutral-200/60 dark:hover:bg-neutral-900 rounded-lg p-2.5 text-xs font-mono transition-colors cursor-pointer"
+                      >
                         <div className="flex items-center justify-between mb-1.5 opacity-70 text-[10px]">
-                          <span>Logged: {proof.value} {commitment.rule?.targetUnit}</span>
+                          <span className="font-semibold text-emerald-600 dark:text-emerald-400">Logged: +{proof.value} {commitment.rule?.targetUnit}</span>
                           <span>{new Date(proof.submittedAt * 1000).toLocaleString()}</span>
                         </div>
                         {proof.metadata ? (
@@ -366,10 +387,11 @@ export const CommitmentDetailPage: React.FC = () => {
         <ProofModal
           isOpen={true}
           onClose={() => setSelectedDay(null)}
-          day={selectedDay}
+          day={commitment.days?.find(d => d.id === selectedDay.id) || selectedDay}
           commitmentId={commitment.id}
           commitmentTitle={commitment.title}
           targetUnit={commitment.rule?.targetUnit || ''}
+          isCreator={isCreator}
           onSuccess={loadCommitment}
         />
       )}

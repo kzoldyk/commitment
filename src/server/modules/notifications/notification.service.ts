@@ -68,7 +68,7 @@ export class NotificationService {
     limit: number = 20,
     env?: any
   ): Promise<{ processed: number; succeeded: number; failed: number; dispatches: DispatchLog[] }> {
-    if (env && !(this.emailService as any).gmailUser) {
+    if (env) {
       this.emailService = new EmailService(env);
     }
 
@@ -129,7 +129,7 @@ export class NotificationService {
       }
 
       const payload = JSON.parse(event.payload || '{}');
-      const emailContent = this.formatEmail(event.type, user.displayName, payload);
+      const emailContent = this.formatEmail(event.type, user.displayName, payload, user.email);
 
       const result = await this.emailService.sendEmail({
         to: user.email,

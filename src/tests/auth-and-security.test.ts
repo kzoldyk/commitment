@@ -140,5 +140,45 @@ describe('Auth, Security & Authorization Guardrails', () => {
     const accepted = await commitmentService.accept(db, contract.id, newPartner.id);
     expect(accepted.status).toBe('ACTIVE');
     expect(accepted.partner.username).toBe('friend_account');
+
+    // Calling accept again should be idempotent and return the active commitment without error
+    const reaccepted = await commitmentService.accept(db, contract.id, newPartner.id);
+    expect(reaccepted.status).toBe('ACTIVE');
+    expect(reaccepted.id).toBe(contract.id);
+  });
+
+  it('should prevent invited account from claiming a username that is already taken by another active user', async () => {
+    // 1. Existing user
+    await authService.register(db, {
+      username: 'taken_username',
+      email: 'taken@test.com',
+      password: 'password123',
+    });
+
+    const { user: creator } = await authService.register(db, {
+      username: 'creator_user',
+      email: 'creator@test.com',
+      password: 'password123',
+    });
+
+    // 2. Invite user by email
+    await commitmentService.create(db, {
+      creatorId: creator.id,
+      partnerUsername: 'invited_partner@example.com',
+      title: 'Fitness habit',
+      startDate: '2099-01-01',
+      endDate: '2099-01-30',
+      targetValue: 1,
+      targetUnit: 'session',
+    });
+
+    // 3. Invited partner tries to register using the already taken username
+    await expect(
+      authService.register(db, {
+        username: 'taken_username',
+        email: 'invited_partner@example.com',
+        password: 'password123',
+      })
+    ).rejects.toThrow('Username is already taken');
   });
 });

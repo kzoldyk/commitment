@@ -7,6 +7,10 @@ import { MacWindow } from '../components/MacWindow';
 export const LoginPage: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
+
+  const searchParams = new URLSearchParams(window.location.search);
+  const inviteId = searchParams.get('invite') || '';
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -20,7 +24,11 @@ export const LoginPage: React.FC = () => {
       setLoading(true);
       setError(null);
       await login(username.trim(), password);
-      navigate('/dashboard');
+      if (inviteId) {
+        navigate(`/commitments/${inviteId}`);
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err: any) {
       setError(err.message || 'Invalid username or password');
     } finally {
@@ -33,8 +41,8 @@ export const LoginPage: React.FC = () => {
       <div className="w-full max-w-md">
         <MacWindow title="login_session.app">
           <div className="text-center mb-6">
-            <div className="w-9 h-9 rounded-lg bg-rose-600 flex items-center justify-center text-white font-black text-sm mx-auto mb-2 shadow-[0_0_15px_rgba(225,29,72,0.4)]">
-              C
+            <div className="w-12 h-12 mx-auto mb-2.5 flex items-center justify-center drop-shadow-[0_4px_16px_rgba(225,29,72,0.45)]">
+              <img src="/logo-mark.png" alt="Commitment Seal" className="w-12 h-12 object-contain" />
             </div>
             <h2 className="text-xl font-bold text-neutral-900 dark:text-white tracking-tight">sign in</h2>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 font-mono mt-0.5">access your active contracts</p>
