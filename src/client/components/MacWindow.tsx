@@ -1,17 +1,21 @@
 import React from 'react';
+import { X } from 'lucide-react';
 
-interface MacWindowProps {
-  title?: string;
+export interface CardFrameProps {
+  title?: React.ReactNode;
+  subtitle?: React.ReactNode;
   className?: string;
   titleBarClassName?: string;
   children: React.ReactNode;
   rightAction?: React.ReactNode;
   icon?: React.ReactNode;
   onClose?: () => void;
+  showTrafficLights?: boolean;
 }
 
-export const MacWindow: React.FC<MacWindowProps> = ({
+export const MacWindow: React.FC<CardFrameProps> = ({
   title,
+  subtitle,
   className = '',
   titleBarClassName = '',
   children,
@@ -21,48 +25,50 @@ export const MacWindow: React.FC<MacWindowProps> = ({
 }) => {
   return (
     <div
-      className={`rounded-xl bg-white/95 dark:bg-neutral-900/90 text-neutral-900 dark:text-neutral-100 border border-neutral-200/80 dark:border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_50px_-10px_rgba(0,0,0,0.6)] backdrop-blur-xl overflow-hidden transition-all duration-200 ${className}`}
+      className={`rounded-xl bg-[var(--fc-surface)] text-[var(--fc-accent-black)] border border-[var(--fc-border-muted)] shadow-[0_1px_3px_rgba(0,0,0,0.02)] transition-all duration-150 hover:border-[var(--fc-border-loud)] ${className}`}
     >
-      {/* macOS Titlebar */}
-      <div
-        className={`flex items-center justify-between px-3.5 py-2.5 bg-gradient-to-b from-[#f8f8fa] to-[#ececed] dark:from-[#282830] dark:to-[#1c1c22] border-b border-black/[0.08] dark:border-white/[0.08] select-none ${titleBarClassName}`}
-      >
-        <div className="flex items-center gap-2 group/dots">
-          <button
-            type="button"
-            onClick={onClose}
-            className="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e] flex items-center justify-center text-[8px] text-black/60 font-black cursor-pointer shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)]"
-            title="Close"
-          >
-            <span className="opacity-0 group-hover/dots:opacity-100 transition-opacity">×</span>
-          </button>
-          <div
-            className="w-3 h-3 rounded-full bg-[#ffbd2e] border border-[#dea123] flex items-center justify-center text-[8px] text-black/60 font-black shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)]"
-            title="Minimize"
-          >
-            <span className="opacity-0 group-hover/dots:opacity-100 transition-opacity">−</span>
+      {/* Header Bar */}
+      {(title || rightAction || onClose) && (
+        <div
+          className={`flex items-center justify-between px-5 py-3.5 bg-[var(--fc-alpha-4)] border-b border-[var(--fc-border-faint)] select-none ${titleBarClassName}`}
+        >
+          <div className="flex items-center gap-3 min-w-0">
+            {icon && (
+              <div className="w-7 h-7 rounded-md bg-[var(--fc-alpha-4)] border border-[var(--fc-border-muted)] flex items-center justify-center shrink-0 text-[var(--fc-accent-black)]">
+                {icon}
+              </div>
+            )}
+            <div className="truncate">
+              {title && (
+                <div className="text-sm font-semibold tracking-tight text-[var(--fc-accent-black)] flex items-center gap-2">
+                  {title}
+                </div>
+              )}
+              {subtitle && (
+                <div className="text-[11px] font-mono text-[var(--fc-accent-black)]/60">
+                  {subtitle}
+                </div>
+              )}
+            </div>
           </div>
-          <div
-            className="w-3 h-3 rounded-full bg-[#27c93f] border border-[#1aab29] flex items-center justify-center text-[8px] text-black/60 font-black shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)]"
-            title="Zoom"
-          >
-            <span className="opacity-0 group-hover/dots:opacity-100 transition-opacity">+</span>
+
+          <div className="flex items-center gap-2.5 shrink-0">
+            {rightAction}
+            {onClose && (
+              <button
+                type="button"
+                onClick={onClose}
+                className="p-1 rounded-md hover:bg-[var(--fc-alpha-8)] text-[var(--fc-accent-black)]/60 hover:text-[var(--fc-accent-black)] transition-colors cursor-pointer"
+                title="Close"
+              >
+                <X size={15} />
+              </button>
+            )}
           </div>
         </div>
+      )}
 
-        {title && (
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-neutral-700 dark:text-neutral-300 font-mono tracking-tight">
-            {icon && <span className="opacity-80">{icon}</span>}
-            <span>{title}</span>
-          </div>
-        )}
-
-        <div>
-          {rightAction || <div className="w-12" />}
-        </div>
-      </div>
-
-      {/* Window Body */}
+      {/* Body */}
       <div className="p-5 sm:p-6">
         {children}
       </div>

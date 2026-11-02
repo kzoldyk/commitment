@@ -12,14 +12,17 @@ export const StreakBadge: React.FC<StreakBadgeProps> = ({ streak, size = 'md' })
 
   return (
     <div
-      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border ${
+      className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border transition-colors ${
         streak > 0
-          ? 'bg-amber-50 dark:bg-amber-500/10 border-amber-300 dark:border-amber-500/30 text-amber-700 dark:text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.15)]'
-          : 'bg-neutral-100 dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800 text-neutral-500 dark:text-neutral-500'
+          ? 'bg-amber-500/10 border-amber-500/25 text-amber-400'
+          : 'bg-white/[0.04] border-white/[0.06] text-[#626670]'
       }`}
     >
-      <Flame size={iconSize} className={streak > 0 ? 'text-amber-500 animate-pulse' : 'text-neutral-400 dark:text-neutral-600'} />
-      <span className={`font-mono ${textSize}`}>
+      <Flame
+        size={iconSize}
+        className={streak > 0 ? 'text-amber-400 fill-amber-400/20' : 'text-[#626670]'}
+      />
+      <span className={`font-mono tabular-nums ${textSize}`}>
         {streak} {streak === 1 ? 'day' : 'days'}
       </span>
     </div>

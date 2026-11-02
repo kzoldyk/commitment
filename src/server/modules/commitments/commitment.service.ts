@@ -601,7 +601,11 @@ export class CommitmentService {
       commitmentDayId: day.id,
       type: 'MANUAL',
       value: params.value,
-      metadata: params.metadataText ? JSON.stringify({ note: params.metadataText }) : null,
+      metadata: params.metadataText
+        ? (params.metadataText.startsWith('{')
+            ? params.metadataText
+            : JSON.stringify({ note: params.metadataText }))
+        : null,
       submittedBy: params.userId,
       submittedAt: now,
       status: 'VERIFIED',

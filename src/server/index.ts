@@ -10,6 +10,7 @@ import { UserService } from './modules/users/user.service';
 import { DashboardService } from './modules/dashboard/dashboard.service';
 import { EmailService } from './modules/notifications/email.service';
 import { NotificationService } from './modules/notifications/notification.service';
+import { resolveLeetCodeProblem } from './modules/leetcode/leetcode.resolver';
 
 export type Bindings = {
   DB?: D1Database;
@@ -243,6 +244,21 @@ app.post('/api/commitments/:id/days/:dayId/proof', requireAuth, async (c) => {
   } catch (err: any) {
     return c.json({ error: { code: 'PROOF_FAILED', message: err.message } }, 400);
   }
+});
+
+// --- LEETCODE AUTO-RESOLUTION ENDPOINT ---
+app.get('/api/leetcode/resolve', async (c) => {
+  const query = c.req.query('id') || c.req.query('q');
+  if (!query) {
+    return c.json({ error: { code: 'INVALID_QUERY', message: 'Missing problem id or query parameter' } }, 400);
+  }
+
+  const problem = await resolveLeetCodeProblem(query);
+  if (!problem) {
+    return c.json({ error: { code: 'NOT_FOUND', message: `LeetCode problem '${query}' could not be resolved` } }, 404);
+  }
+
+  return c.json({ problem });
 });
 
 // --- USER & PREFERENCE ROUTES ---

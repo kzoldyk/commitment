@@ -1,12 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Flame, Heart, CheckCircle2, Clock, AlertTriangle, ShieldCheck, ChevronRight, Check, X, RefreshCw, Terminal, Coins, Trash2 } from 'lucide-react';
+import {
+  Plus,
+  Flame,
+  CheckCircle2,
+  Clock,
+  AlertTriangle,
+  ShieldCheck,
+  Shield,
+  ChevronRight,
+  Check,
+  X,
+  RefreshCw,
+  Coins,
+  Trash2,
+  Calendar as CalendarIcon,
+  Activity,
+  Layers,
+} from 'lucide-react';
 import { api, DashboardData, Commitment, CommitmentDay } from '../lib/api';
 import { useAuth } from '../lib/auth-context';
 import { LivesIndicator } from '../components/LivesIndicator';
 import { StreakBadge } from '../components/StreakBadge';
 import { ProofModal } from '../components/ProofModal';
-import { MacWindow } from '../components/MacWindow';
+import { ConfirmModal } from '../components/ConfirmModal';
 
 export const DashboardPage: React.FC = () => {
   const { user } = useAuth();
@@ -14,6 +31,23 @@ export const DashboardPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [evaluating, setEvaluating] = useState(false);
   const [evalMessage, setEvalMessage] = useState<string | null>(null);
+
+  // In-App Non-Blocking Confirmation Modal State
+  const [confirmModal, setConfirmModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    confirmText?: string;
+    cancelText?: string;
+    isDestructive?: boolean;
+    isAlert?: boolean;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => {},
+  });
 
   // Proof Modal state
   const [selectedProofDay, setSelectedProofDay] = useState<{ day: CommitmentDay; commitment: Commitment } | null>(null);
@@ -37,30 +71,78 @@ export const DashboardPage: React.FC = () => {
   const handleAccept = async (id: string) => {
     try {
       await api.acceptCommitment(id);
-      loadData();
+      setData((prev) => {
+        if (!prev) return prev;
+        const accepted = prev.pendingInvitations.find((p) => p.id === id);
+        return {
+          ...prev,
+          pendingInvitations: prev.pendingInvitations.filter((p) => p.id !== id),
+          activeCommitments: accepted ? [{ ...accepted, status: 'ACTIVE' }, ...prev.activeCommitments] : prev.activeCommitments,
+        };
+      });
+      await loadData();
     } catch (err: any) {
-      alert(err.message || 'Failed to accept commitment');
+      setConfirmModal({
+        isOpen: true,
+        title: 'Acceptance failed',
+        message: err.message || 'Failed to accept commitment',
+        isAlert: true,
+        confirmText: 'Dismiss',
+        onConfirm: () => setConfirmModal((prev) => ({ ...prev, isOpen: false })),
+      });
     }
   };
 
-  const handleDecline = async (id: string) => {
-    if (!confirm('Are you sure you want to decline this accountability contract?')) return;
-    try {
-      await api.declineCommitment(id);
-      loadData();
-    } catch (err: any) {
-      alert(err.message || 'Failed to decline commitment');
-    }
+  const handleDecline = (id: string) => {
+    setConfirmModal({
+      isOpen: true,
+      title: 'Decline commitment',
+      message: 'Are you sure you want to decline this accountability contract?',
+      confirmText: 'Decline contract',
+      isDestructive: true,
+      onConfirm: async () => {
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        try {
+          await api.declineCommitment(id);
+          loadData();
+        } catch (err: any) {
+          setConfirmModal({
+            isOpen: true,
+            title: 'Decline failed',
+            message: err.message || 'Failed to decline commitment',
+            isAlert: true,
+            confirmText: 'Dismiss',
+            onConfirm: () => setConfirmModal((prev) => ({ ...prev, isOpen: false })),
+          });
+        }
+      },
+    });
   };
 
-  const handleCancelPending = async (id: string, title: string) => {
-    if (!confirm(`Are you sure you want to cancel and delete the pending contract "${title}"?`)) return;
-    try {
-      await api.cancelCommitment(id);
-      loadData();
-    } catch (err: any) {
-      alert(err.message || 'Failed to delete pending contract');
-    }
+  const handleCancelPending = (id: string, title: string) => {
+    setConfirmModal({
+      isOpen: true,
+      title: 'Cancel pending contract',
+      message: `Are you sure you want to cancel and delete the pending contract "${title}"?`,
+      confirmText: 'Cancel contract',
+      isDestructive: true,
+      onConfirm: async () => {
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        try {
+          await api.cancelCommitment(id);
+          loadData();
+        } catch (err: any) {
+          setConfirmModal({
+            isOpen: true,
+            title: 'Deletion failed',
+            message: err.message || 'Failed to delete pending contract',
+            isAlert: true,
+            confirmText: 'Dismiss',
+            onConfirm: () => setConfirmModal((prev) => ({ ...prev, isOpen: false })),
+          });
+        }
+      },
+    });
   };
 
   const handleRunEvaluation = async () => {
@@ -71,7 +153,14 @@ export const DashboardPage: React.FC = () => {
       setTimeout(() => setEvalMessage(null), 6000);
       loadData();
     } catch (err: any) {
-      alert(err.message || 'Failed to run evaluation');
+      setConfirmModal({
+        isOpen: true,
+        title: 'Evaluation failed',
+        message: err.message || 'Failed to run evaluation',
+        isAlert: true,
+        confirmText: 'Dismiss',
+        onConfirm: () => setConfirmModal((prev) => ({ ...prev, isOpen: false })),
+      });
     } finally {
       setEvaluating(false);
     }
@@ -79,10 +168,41 @@ export const DashboardPage: React.FC = () => {
 
   if (loading && !data) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="flex items-center gap-3 text-neutral-500 font-mono text-xs">
-          <RefreshCw size={16} className="animate-spin text-rose-500" />
-          <span>loading mission control...</span>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-8 animate-pulse">
+        {/* Top Header Bar Skeleton */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/[0.06] dark:border-white/[0.08] pb-6">
+          <div className="space-y-2">
+            <div className="h-8 w-64 bg-neutral-200 dark:bg-white/[0.06] rounded-lg" />
+            <div className="h-4 w-48 bg-neutral-200 dark:bg-white/[0.06] rounded-md" />
+          </div>
+          <div className="flex gap-3">
+            <div className="h-9 w-28 bg-neutral-200 dark:bg-white/[0.06] rounded-xl" />
+            <div className="h-9 w-32 bg-neutral-200 dark:bg-white/[0.06] rounded-xl" />
+          </div>
+        </div>
+
+        {/* Stats Summary Bar Skeleton */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="p-4 rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-white/60 dark:bg-white/[0.02] h-24 flex flex-col justify-between">
+              <div className="h-3 w-16 bg-neutral-200 dark:bg-white/[0.06] rounded" />
+              <div className="h-7 w-20 bg-neutral-200 dark:bg-white/[0.06] rounded" />
+            </div>
+          ))}
+        </div>
+
+        {/* Contracts List Skeleton */}
+        <div className="space-y-4">
+          <div className="h-5 w-40 bg-neutral-200 dark:bg-white/[0.06] rounded" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[1, 2].map((i) => (
+              <div key={i} className="p-5 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] bg-white/60 dark:bg-white/[0.02] h-64 space-y-4">
+                <div className="h-5 w-3/4 bg-neutral-200 dark:bg-white/[0.06] rounded" />
+                <div className="h-4 w-1/2 bg-neutral-200 dark:bg-white/[0.06] rounded" />
+                <div className="h-20 w-full bg-neutral-200 dark:bg-white/[0.06] rounded-lg" />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -92,128 +212,142 @@ export const DashboardPage: React.FC = () => {
   const pendingSent = data?.pendingInvitations.filter((p) => p.isCreator) || [];
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-6">
       {/* Top Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-200 dark:border-white/[0.06] pb-5">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-white tracking-tight">
-            good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening'}, {user?.displayName || user?.username}.
+          <h1 className="text-xl sm:text-2xl font-semibold text-[#111827] dark:text-[#f2f3f5] tracking-tight">
+            Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening'}, {user?.displayName || user?.username}.
           </h1>
-          <p className="text-xs text-neutral-500 dark:text-neutral-400 font-mono mt-1">
-            today: <span className="text-neutral-900 dark:text-neutral-200">{data?.todayDate}</span> · timezone: <span className="text-neutral-900 dark:text-neutral-200">{data?.userTimezone}</span>
+          <p className="text-xs text-neutral-500 dark:text-[#8a8f98] font-mono mt-1 flex items-center gap-2">
+            <span>Account: <strong className="text-[#111827] dark:text-[#f2f3f5] font-medium">{user?.username}</strong></span>
+            <span>·</span>
+            <span>Today: <strong className="text-[#111827] dark:text-[#f2f3f5] font-medium">{data?.todayDate}</strong></span>
+            <span>·</span>
+            <span>Timezone: <strong className="text-[#111827] dark:text-[#f2f3f5] font-medium">{data?.userTimezone}</strong></span>
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button
+            type="button"
             onClick={handleRunEvaluation}
             disabled={evaluating}
-            className="mac-btn-secondary px-3.5 py-2 rounded-xl text-xs font-mono font-medium flex items-center gap-2 cursor-pointer shadow-sm"
+            className="mac-btn-secondary !text-xs !py-1.5 !px-3 font-mono cursor-pointer"
             title="Trigger scheduled evaluation check for closed periods"
           >
-            <div className="mac-gloss" />
-            <RefreshCw size={13} className={evaluating ? 'animate-spin text-amber-500' : 'text-neutral-500'} />
-            <span>{evaluating ? 'evaluating...' : 'run evaluation'}</span>
+            <RefreshCw size={13} className={evaluating ? 'animate-spin text-amber-500' : 'text-neutral-400 dark:text-[#626670]'} />
+            <span>{evaluating ? 'Evaluating...' : 'Run evaluation'}</span>
           </button>
 
           <Link
             to="/create"
-            className="mac-btn-primary px-4 py-2 rounded-xl text-white text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-lg"
+            className="mac-btn-primary !text-xs !py-1.5 !px-3.5 font-medium cursor-pointer"
           >
-            <div className="mac-gloss" />
             <Plus size={14} />
-            <span>new contract</span>
+            <span>New contract</span>
           </Link>
         </div>
       </div>
 
       {evalMessage && (
-        <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800/80 text-emerald-800 dark:text-emerald-300 text-xs font-mono flex items-center justify-between">
+        <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs font-mono flex items-center justify-between animate-in fade-in">
           <span>{evalMessage}</span>
-          <button onClick={() => setEvalMessage(null)} className="text-emerald-600 dark:text-emerald-400 hover:opacity-75">✕</button>
+          <button onClick={() => setEvalMessage(null)} className="text-emerald-600 dark:text-emerald-400 hover:opacity-75 cursor-pointer">✕</button>
         </div>
       )}
 
-      {/* Stats Summary Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="p-4 rounded-xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-neutral-900/60 backdrop-blur-md shadow-sm">
-          <span className="text-[10px] font-mono text-neutral-500 dark:text-neutral-400 uppercase tracking-wider block mb-1">
+      {/* Stats Summary Bar (Linear KPI Tiles) */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="p-3.5 rounded-lg border border-neutral-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02]">
+          <span className="text-[11px] font-mono uppercase tracking-wider text-neutral-400 dark:text-[#626670] block mb-1">
             Active Contracts
           </span>
-          <span className="text-2xl font-bold font-mono text-neutral-900 dark:text-white">{data?.stats.activeCount || 0}</span>
+          <span className="text-2xl font-semibold font-mono text-[#111827] dark:text-[#f2f3f5] tabular-nums">
+            {data?.stats.activeCount || 0}
+          </span>
         </div>
 
-        <div className="p-4 rounded-xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-neutral-900/60 backdrop-blur-md shadow-sm">
-          <span className="text-[10px] font-mono text-neutral-500 dark:text-neutral-400 uppercase tracking-wider block mb-1">
+        <div className="p-3.5 rounded-lg border border-neutral-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02]">
+          <span className="text-[11px] font-mono uppercase tracking-wider text-neutral-400 dark:text-[#626670] block mb-1">
             Highest Streak
           </span>
           <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold font-mono text-amber-600 dark:text-amber-400">{data?.stats.highestStreak || 0}</span>
-            <Flame size={16} className="text-amber-500" />
+            <span className="text-2xl font-semibold font-mono text-amber-500 dark:text-amber-400 tabular-nums">
+              {data?.stats.highestStreak || 0}
+            </span>
+            <Flame size={16} className="text-amber-500 fill-amber-500/20" />
           </div>
         </div>
 
-        <div className="p-4 rounded-xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-neutral-900/60 backdrop-blur-md shadow-sm">
-          <span className="text-[10px] font-mono text-neutral-500 dark:text-neutral-400 uppercase tracking-wider block mb-1">
+        <div className="p-3.5 rounded-lg border border-neutral-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02]">
+          <span className="text-[11px] font-mono uppercase tracking-wider text-neutral-400 dark:text-[#626670] block mb-1">
             Successful Days
           </span>
           <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold font-mono text-emerald-600 dark:text-emerald-400">{data?.stats.totalSuccessfulDays || 0}</span>
-            <CheckCircle2 size={16} className="text-emerald-500" />
+            <span className="text-2xl font-semibold font-mono text-emerald-600 dark:text-emerald-400 tabular-nums">
+              {data?.stats.totalSuccessfulDays || 0}
+            </span>
+            <CheckCircle2 size={16} className="text-emerald-600 dark:text-emerald-400" />
           </div>
         </div>
 
-        <div className="p-4 rounded-xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-neutral-900/60 backdrop-blur-md shadow-sm">
-          <span className="text-[10px] font-mono text-neutral-500 dark:text-neutral-400 uppercase tracking-wider block mb-1">
+        <div className="p-3.5 rounded-lg border border-neutral-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02]">
+          <span className="text-[11px] font-mono uppercase tracking-wider text-neutral-400 dark:text-[#626670] block mb-1">
             Pending Invites
           </span>
-          <span className="text-2xl font-bold font-mono text-rose-600 dark:text-rose-400">{data?.stats.pendingInvitesCount || 0}</span>
+          <span className="text-2xl font-semibold font-mono text-neutral-500 dark:text-[#8a8f98] tabular-nums">
+            {data?.stats.pendingInvitesCount || 0}
+          </span>
         </div>
       </div>
 
       {/* Incoming Requests Section (if any) */}
       {pendingIncoming.length > 0 && (
         <div className="space-y-3">
-          <h2 className="text-xs font-mono uppercase tracking-wider font-bold text-rose-600 dark:text-rose-400 flex items-center gap-2">
-            <AlertTriangle size={14} />
-            <span>incoming accountability requests ({pendingIncoming.length})</span>
+          <h2 className="text-xs font-semibold text-amber-500 dark:text-amber-400 flex items-center gap-2 font-mono uppercase tracking-wider">
+            <AlertTriangle size={13} />
+            <span>Incoming Accountability Requests ({pendingIncoming.length})</span>
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {pendingIncoming.map((invite) => (
-              <MacWindow key={invite.id} title="invitation_request.app">
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-mono text-neutral-500 dark:text-neutral-400">
-                        from <strong className="text-neutral-900 dark:text-white">@{invite.creator?.username}</strong>
-                      </span>
-                      <span className="text-xs font-mono text-neutral-500 dark:text-neutral-400">{invite.rule?.frequencyType}</span>
-                    </div>
-                    <h3 className="text-base font-bold text-neutral-900 dark:text-white mb-1">{invite.title}</h3>
-                    <p className="text-xs text-neutral-600 dark:text-neutral-300 font-mono">
+              <div
+                key={invite.id}
+                className="rounded-xl border border-amber-500/30 bg-amber-500/[0.03] p-5 space-y-4"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="space-y-1 min-w-0">
+                    <span className="text-[11px] font-mono text-neutral-500 dark:text-[#8a8f98]">
+                      Invitation from <strong className="text-[#111827] dark:text-[#f2f3f5] font-medium">@{invite.creator?.username}</strong>
+                    </span>
+                    <h3 className="text-sm font-semibold text-[#111827] dark:text-[#f2f3f5]">{invite.title}</h3>
+                    <p className="text-xs text-neutral-500 dark:text-[#8a8f98] font-mono">
                       Target: {invite.rule?.targetValue} {invite.rule?.targetUnit} · {invite.currentLives} Lives
                     </p>
                   </div>
-
-                  <div className="flex items-center gap-3 pt-3 border-t border-black/10 dark:border-white/10">
-                    <button
-                      onClick={() => handleAccept(invite.id)}
-                      className="mac-btn-primary flex-1 py-2 rounded-xl text-white font-semibold text-xs flex items-center justify-center gap-1.5 cursor-pointer"
-                    >
-                      <div className="mac-gloss" />
-                      <Check size={14} />
-                      <span>accept contract</span>
-                    </button>
-                    <button
-                      onClick={() => handleDecline(invite.id)}
-                      className="mac-btn-secondary px-4 py-2 rounded-xl text-neutral-600 dark:text-neutral-400 font-medium text-xs cursor-pointer"
-                    >
-                      <div className="mac-gloss" />
-                      <span>decline</span>
-                    </button>
-                  </div>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-neutral-100 dark:bg-white/[0.04] text-neutral-600 dark:text-[#8a8f98] border border-neutral-200 dark:border-white/[0.06]">
+                    {invite.rule?.frequencyType || 'DAILY'}
+                  </span>
                 </div>
-              </MacWindow>
+
+                <div className="flex items-center gap-2.5 pt-3 border-t border-neutral-200 dark:border-white/[0.06]">
+                  <button
+                    type="button"
+                    onClick={() => handleAccept(invite.id)}
+                    className="mac-btn-primary !text-xs !py-1.5 !flex-1 font-medium cursor-pointer"
+                  >
+                    <Check size={13} />
+                    <span>Accept contract</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDecline(invite.id)}
+                    className="mac-btn-secondary !text-xs !py-1.5 !px-3.5 font-medium cursor-pointer"
+                  >
+                    <span>Decline</span>
+                  </button>
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -221,30 +355,32 @@ export const DashboardPage: React.FC = () => {
 
       {/* Active Contracts Grid */}
       <div className="space-y-4">
-        <h2 className="text-xs font-mono uppercase tracking-wider font-bold text-neutral-700 dark:text-neutral-300">
-          active contracts ({data?.activeCommitments.length || 0})
-        </h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-xs font-mono uppercase tracking-wider font-semibold text-neutral-600 dark:text-[#8a8f98]">
+            Active Contracts ({data?.activeCommitments.length || 0})
+          </h2>
+          <span className="text-[11px] font-mono text-neutral-400 dark:text-[#626670]">
+            Click any contract to inspect full heatmap & evidence logs
+          </span>
+        </div>
 
         {data?.activeCommitments.length === 0 ? (
-          <MacWindow title="empty_contracts.txt">
-            <div className="py-10 text-center">
-              <ShieldCheck size={36} className="text-neutral-400 dark:text-neutral-600 mx-auto mb-3" />
-              <h3 className="text-base font-bold text-neutral-900 dark:text-white mb-1">no active commitments</h3>
-              <p className="text-xs text-neutral-500 dark:text-neutral-400 max-w-md mx-auto mb-5 font-mono">
-                forge a new contract with measurable rules and designate an accountability partner.
-              </p>
-              <Link
-                to="/create"
-                className="mac-btn-primary inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-white text-xs font-semibold"
-              >
-                <div className="mac-gloss" />
-                <Plus size={14} />
-                <span>create commitment</span>
-              </Link>
-            </div>
-          </MacWindow>
+          <div className="rounded-xl border border-neutral-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02] p-12 text-center">
+            <ShieldCheck size={36} className="text-neutral-400 dark:text-[#626670] mx-auto mb-3" />
+            <h3 className="text-base font-semibold text-[#111827] dark:text-[#f2f3f5] mb-1">No active commitments</h3>
+            <p className="text-xs text-neutral-500 dark:text-[#8a8f98] max-w-sm mx-auto mb-5 font-mono">
+              Forge a witnessed accountability covenant with finite lives and midnight cutoffs.
+            </p>
+            <Link
+              to="/create"
+              className="mac-btn-primary !py-2 !px-4 text-xs font-semibold"
+            >
+              <Plus size={14} />
+              <span>Forge first covenant</span>
+            </Link>
+          </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {data?.activeCommitments.map((c) => {
               const today = c.todayProgress;
               const isTodayCompleted = today?.status === 'COMPLETED';
@@ -257,98 +393,106 @@ export const DashboardPage: React.FC = () => {
                 : `Today's Progress (${today?.periodKey || data?.todayDate})`;
 
               return (
-                <MacWindow
+                <div
                   key={c.id}
-                  title={`${c.title.slice(0, 26)}...`}
-                  rightAction={
-                    <span className="text-[10px] font-mono text-neutral-500 dark:text-neutral-400">
+                  className="group rounded-xl border border-neutral-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02] hover:border-neutral-300 dark:hover:border-white/[0.14] p-5 transition-all duration-150 flex flex-col justify-between gap-4 shadow-xs"
+                >
+                  {/* Card Header: Status Glyph, Title & Partner Pill */}
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="space-y-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`w-2 h-2 rounded-full shrink-0 ${
+                            isTodayCompleted
+                              ? 'bg-emerald-500 dark:bg-emerald-400'
+                              : 'border border-amber-500/80 bg-amber-500/20'
+                          }`}
+                        />
+                        <Link
+                          to={`/commitments/${c.id}`}
+                          className="text-sm font-semibold tracking-tight text-[#111827] dark:text-[#f2f3f5] hover:underline truncate transition-colors"
+                        >
+                          {c.title}
+                        </Link>
+                      </div>
+                      <p className="text-[11px] font-mono text-neutral-500 dark:text-[#8a8f98] pl-4">
+                        {c.rule?.frequencyType || 'DAILY'} · Target: {c.rule?.targetValue} {c.rule?.targetUnit}
+                      </p>
+                    </div>
+
+                    <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-neutral-100 dark:bg-white/[0.04] text-neutral-600 dark:text-[#8a8f98] border border-neutral-200 dark:border-white/[0.06] shrink-0">
                       {c.isCreator ? `@${c.partner?.username}` : `@${c.creator?.username}`}
                     </span>
-                  }
-                >
-                  <div className="space-y-4">
-                    {/* Header with Lives & Streak */}
-                    <div className="flex items-center justify-between">
-                      <LivesIndicator currentLives={c.currentLives} maxLives={c.rule?.maxLives || 3} size="md" />
-                      <StreakBadge streak={c.currentStreak} size="sm" />
+                  </div>
+
+                  {/* Middle: Today's Target Status & Micro-Progress Track */}
+                  <div className="p-3 rounded-lg bg-neutral-50 dark:bg-white/[0.03] border border-neutral-200 dark:border-white/[0.06] space-y-2">
+                    <div className="flex items-center justify-between text-xs font-mono">
+                      <span className="text-neutral-500 dark:text-[#8a8f98]">
+                        {progressLabel}
+                      </span>
+                      <span className={`font-semibold tabular-nums ${isTodayCompleted ? 'text-emerald-600 dark:text-emerald-400' : completedVal > 0 ? 'text-amber-500 dark:text-amber-400' : 'text-neutral-500 dark:text-[#8a8f98]'}`}>
+                        {completedVal} / {targetVal} {c.rule?.targetUnit} {isTodayCompleted && '(Done ✓)'}
+                      </span>
                     </div>
-
-                    {/* Title */}
-                    <Link to={`/commitments/${c.id}`} className="block group">
-                      <h3 className="text-base font-bold text-neutral-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">
-                        {c.title}
-                      </h3>
-                    </Link>
-
-                    {/* Today's Target Box */}
-                    <div className="p-3.5 rounded-xl bg-neutral-100 dark:bg-black/40 border border-black/5 dark:border-white/5 space-y-2">
-                      <div className="flex items-center justify-between text-xs font-mono">
-                        <span className="text-neutral-500 dark:text-neutral-400 flex items-center gap-1.5">
-                          {isFuture && (
-                            <span className="px-1.5 py-0.5 rounded text-[10px] bg-blue-500/10 text-blue-500 font-semibold border border-blue-500/20">
-                              STARTS {today?.periodKey}
-                            </span>
-                          )}
-                          <span>{progressLabel}</span>
-                        </span>
-                        <span className={`font-bold ${isTodayCompleted ? 'text-emerald-600 dark:text-emerald-400' : completedVal > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-neutral-600 dark:text-neutral-400'}`}>
-                          {completedVal} / {targetVal} {c.rule?.targetUnit} {isTodayCompleted && '(Done ✓)'}
-                        </span>
-                      </div>
-                      <div className="w-full h-1.5 bg-neutral-200 dark:bg-neutral-800 rounded-full overflow-hidden">
-                        <div
-                          className={`h-full transition-all duration-500 rounded-full ${
-                            isTodayCompleted ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : completedVal > 0 ? 'bg-amber-500' : 'bg-neutral-300 dark:bg-neutral-700'
-                          }`}
-                          style={{ width: `${progressPct}%` }}
-                        />
-                      </div>
-                      {isFuture && (
-                        <p className="text-[10px] font-mono text-neutral-400 dark:text-neutral-500 pt-0.5">
-                          Contract begins on {today?.periodKey}. No missed penalty will be evaluated today.
-                        </p>
-                      )}
+                    <div className="w-full h-1 bg-neutral-200 dark:bg-white/[0.06] rounded-full overflow-hidden">
+                      <div
+                        className={`h-full transition-all duration-300 rounded-full ${
+                          isTodayCompleted
+                            ? 'bg-emerald-500 dark:bg-emerald-400'
+                            : completedVal > 0
+                            ? 'bg-amber-500 dark:bg-amber-400'
+                            : 'bg-neutral-300 dark:bg-white/[0.1]'
+                        }`}
+                        style={{ width: `${progressPct}%` }}
+                      />
                     </div>
-
-                    {/* Financial Stake / Debt Counter Badge */}
-                    {c.rule?.stakeAmount && c.rule.stakeAmount > 0 && (
-                      <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs font-mono">
-                        <span className="text-amber-700 dark:text-amber-400 flex items-center gap-1.5 font-semibold">
-                          <Coins size={13} className="text-amber-500 shrink-0" />
-                          <span>{c.isCreator ? 'Debt Owed to Partner:' : 'Debt Owed to You:'}</span>
-                        </span>
-                        <span className="font-bold text-amber-600 dark:text-amber-400 font-mono">
-                          {c.rule.stakeCurrency === 'INR' ? '₹' : c.rule.stakeCurrency} {(c.accumulatedPenalty || 0).toLocaleString()}
-                          <span className="text-[10px] font-normal text-neutral-500 ml-1">
-                            ({c.rule.stakeCurrency === 'INR' ? '₹' : c.rule.stakeCurrency}{c.rule.stakeAmount}/miss)
-                          </span>
-                        </span>
-                      </div>
+                    {isFuture && (
+                      <p className="text-[10px] font-mono text-neutral-400 dark:text-[#626670] pt-0.5">
+                        Contract begins on {today?.periodKey}. No penalty will be evaluated today.
+                      </p>
                     )}
+                  </div>
 
-                    {/* Action Row */}
-                    <div className="flex items-center justify-between pt-2 border-t border-black/10 dark:border-white/10">
-                      <Link
-                        to={`/commitments/${c.id}`}
-                        className="text-xs font-mono text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white flex items-center gap-1 transition-colors"
-                      >
-                        <span>inspect contract</span>
-                        <ChevronRight size={13} />
-                      </Link>
-
-                      {c.isCreator && today && !isFuture && !isTodayCompleted && (
-                        <button
-                          onClick={() => setSelectedProofDay({ day: today, commitment: c })}
-                          className="mac-btn-primary px-3.5 py-1.5 rounded-lg text-white font-semibold text-xs flex items-center gap-1.5 cursor-pointer"
-                        >
-                          <div className="mac-gloss" />
-                          <CheckCircle2 size={13} />
-                          <span>log proof</span>
-                        </button>
+                  {/* Metrics: Lives, Streak & Stake */}
+                  <div className="flex items-center justify-between pt-1 text-xs">
+                    <div className="flex items-center gap-3">
+                      <LivesIndicator currentLives={c.currentLives} maxLives={c.rule?.maxLives || 3} size="sm" />
+                      <div className="w-px h-3.5 bg-neutral-200 dark:bg-white/[0.08]" />
+                      <StreakBadge streak={c.currentStreak} size="sm" />
+                      {Boolean(c.rule?.stakeAmount && c.rule.stakeAmount > 0) && (
+                        <>
+                          <div className="w-px h-3.5 bg-neutral-200 dark:bg-white/[0.08]" />
+                          <span className="text-[11px] font-mono text-neutral-500 dark:text-[#8a8f98]">
+                            {c.rule.stakeCurrency === 'INR' ? '₹' : c.rule.stakeCurrency}{c.rule.stakeAmount}/miss
+                          </span>
+                        </>
                       )}
                     </div>
                   </div>
-                </MacWindow>
+
+                  {/* Footer: Actions */}
+                  <div className="flex items-center justify-between pt-3 border-t border-neutral-200 dark:border-white/[0.06]">
+                    <Link
+                      to={`/commitments/${c.id}`}
+                      className="text-xs font-mono text-neutral-500 dark:text-[#8a8f98] hover:text-[#111827] dark:hover:text-[#f2f3f5] flex items-center gap-1 transition-colors"
+                    >
+                      <span>Inspect contract</span>
+                      <ChevronRight size={13} />
+                    </Link>
+
+                    {c.isCreator && today && !isFuture && !isTodayCompleted && (
+                      <button
+                        type="button"
+                        onClick={() => setSelectedProofDay({ day: today, commitment: c })}
+                        className="mac-btn-primary !text-xs !py-1 !px-2.5 font-medium cursor-pointer"
+                      >
+                        <CheckCircle2 size={12} />
+                        <span>Log proof</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
               );
             })}
           </div>
@@ -357,52 +501,52 @@ export const DashboardPage: React.FC = () => {
 
       {/* Outgoing Awaiting Acceptance */}
       {pendingSent.length > 0 && (
-        <div className="space-y-3 pt-4 border-t border-black/10 dark:border-white/10">
-          <h2 className="text-xs font-mono uppercase tracking-wider font-bold text-neutral-500">
-            awaiting partner acceptance ({pendingSent.length})
+        <div className="space-y-3 pt-6 border-t border-neutral-200 dark:border-white/[0.06]">
+          <h2 className="text-xs font-mono uppercase tracking-wider font-semibold text-neutral-600 dark:text-[#8a8f98]">
+            Awaiting Partner Acceptance ({pendingSent.length})
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {pendingSent.map((p) => (
-              <MacWindow
+              <div
                 key={p.id}
-                title="pending.plist"
-                rightAction={
+                className="rounded-xl border border-neutral-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02] p-4 space-y-3"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <h4 className="text-sm font-semibold text-[#111827] dark:text-[#f2f3f5] truncate">{p.title}</h4>
+                    <p className="text-[11px] font-mono text-neutral-500 dark:text-[#8a8f98] mt-0.5">
+                      Waiting on <strong className="text-[#111827] dark:text-[#f2f3f5]">@{p.partner?.username}</strong>
+                    </p>
+                  </div>
                   <button
+                    type="button"
                     onClick={() => handleCancelPending(p.id, p.title)}
-                    className="text-neutral-400 hover:text-rose-500 transition-colors p-0.5 cursor-pointer"
+                    className="text-neutral-400 dark:text-[#626670] hover:text-rose-500 transition-colors p-1 cursor-pointer"
                     title="Delete pending contract"
                   >
                     <Trash2 size={13} />
                   </button>
-                }
-              >
-                <div className="space-y-3">
-                  <div>
-                    <h4 className="text-sm font-semibold text-neutral-900 dark:text-white mb-1 truncate">{p.title}</h4>
-                    <p className="text-xs font-mono text-neutral-500 dark:text-neutral-400">
-                      waiting on <strong className="text-neutral-700 dark:text-neutral-300">@{p.partner?.username}</strong>
-                    </p>
-                  </div>
-
-                  <div className="flex items-center justify-between pt-2 border-t border-black/10 dark:border-white/10 text-xs font-mono">
-                    <Link
-                      to={`/commitments/${p.id}`}
-                      className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white flex items-center gap-1 transition-colors"
-                    >
-                      <span>inspect / edit</span>
-                      <ChevronRight size={12} />
-                    </Link>
-
-                    <button
-                      onClick={() => handleCancelPending(p.id, p.title)}
-                      className="text-rose-600 dark:text-rose-400 hover:text-rose-700 text-[11px] font-semibold flex items-center gap-1 cursor-pointer transition-colors"
-                    >
-                      <Trash2 size={12} />
-                      <span>delete</span>
-                    </button>
-                  </div>
                 </div>
-              </MacWindow>
+
+                <div className="flex items-center justify-between pt-2 border-t border-neutral-200 dark:border-white/[0.06] text-xs font-mono">
+                  <Link
+                    to={`/commitments/${p.id}`}
+                    className="text-neutral-500 dark:text-[#8a8f98] hover:text-[#111827] dark:hover:text-[#f2f3f5] flex items-center gap-1 transition-colors"
+                  >
+                    <span>Inspect</span>
+                    <ChevronRight size={12} />
+                  </Link>
+
+                  <button
+                    type="button"
+                    onClick={() => handleCancelPending(p.id, p.title)}
+                    className="text-rose-500 dark:text-rose-400 hover:underline text-[11px] font-medium flex items-center gap-1 cursor-pointer transition-colors"
+                  >
+                    <Trash2 size={12} />
+                    <span>Delete</span>
+                  </button>
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -417,9 +561,23 @@ export const DashboardPage: React.FC = () => {
           commitmentId={selectedProofDay.commitment.id}
           commitmentTitle={selectedProofDay.commitment.title}
           targetUnit={selectedProofDay.commitment.rule?.targetUnit || ''}
+          isCreator={selectedProofDay.commitment.isCreator}
           onSuccess={loadData}
         />
       )}
+
+      {/* Non-blocking in-app confirmation & alert modal */}
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        confirmText={confirmModal.confirmText}
+        cancelText={confirmModal.cancelText}
+        isDestructive={confirmModal.isDestructive}
+        isAlert={confirmModal.isAlert}
+        onConfirm={confirmModal.onConfirm}
+        onCancel={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
+      />
     </div>
   );
 };

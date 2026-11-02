@@ -178,6 +178,12 @@ export const api = {
   updateProfile: (body: any) =>
     request<{ user: User }>('/api/users/profile', { method: 'PATCH', body: JSON.stringify(body) }),
 
+  // LeetCode Resolution
+  resolveLeetCode: (idOrQuery: string | number) =>
+    request<{ problem: { id: number; title: string; titleSlug: string; difficulty: 'Easy' | 'Medium' | 'Hard'; url: string } }>(
+      `/api/leetcode/resolve?id=${encodeURIComponent(idOrQuery)}`
+    ),
+
   triggerEvaluation: () =>
     request<{ success: boolean; result: any }>('/api/cron/evaluate', { method: 'POST' }),
 };

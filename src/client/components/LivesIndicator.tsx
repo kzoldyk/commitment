@@ -17,16 +17,16 @@ export const LivesIndicator: React.FC<LivesIndicatorProps> = ({ currentLives, ma
         return (
           <div
             key={idx}
-            className={`transition-all duration-300 ${
+            className={`transition-all duration-200 ${
               isAlive
-                ? 'text-rose-500 drop-shadow-[0_0_8px_rgba(244,63,94,0.45)] scale-100'
-                : 'text-neutral-300 dark:text-neutral-700 opacity-70 dark:opacity-40 scale-90'
+                ? 'text-[#eb3424] drop-shadow-[0_0_8px_rgba(235,52,36,0.4)] scale-100'
+                : 'text-white/15 scale-90'
             }`}
           >
             <Heart
               size={iconSize}
               fill={isAlive ? 'currentColor' : 'none'}
-              strokeWidth={isAlive ? 0 : 2}
+              strokeWidth={isAlive ? 0 : 1.75}
             />
           </div>
         );

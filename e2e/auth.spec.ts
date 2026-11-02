@@ -52,10 +52,10 @@ test.describe('Authentication & Session Management', () => {
 
     await expect(page).toHaveURL(/\/dashboard/);
 
-    // Visiting homepage while logged in should show personalized dashboard shortcut
+    // Visiting homepage while logged in should show clean contracts workspace directly
     await page.goto('/');
-    await expect(page.getByRole('link', { name: /go to dashboard/i })).toBeVisible();
-    await expect(page.locator('main').getByRole('link', { name: /new contract/i })).toBeVisible();
+    await expect(page.locator('main').getByRole('link', { name: /new contract/i }).first()).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Active Contracts/i })).toBeVisible();
   });
 
   test('should log out cleanly and redirect to login', async ({ page }) => {

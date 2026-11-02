@@ -76,6 +76,13 @@ export class DashboardService {
 
         totalSuccessfulDays += completedDays.length;
 
+        // Fetch all commitment days for matrix heatmap rendering
+        const allDays = await db
+          .select()
+          .from(schema.commitmentDays)
+          .where(eq(schema.commitmentDays.commitmentId, c.id))
+          .orderBy(schema.commitmentDays.periodStart);
+
         activeList.push({
           ...c,
           rule,
@@ -83,6 +90,7 @@ export class DashboardService {
           partner: otherUser,
           todayProgress: todayDay || null,
           successfulDaysCount: completedDays.length,
+          days: allDays,
         });
       } else {
         completedOrFailed.push({
