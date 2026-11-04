@@ -27,31 +27,31 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-2xl animate-in fade-in duration-150">
       <div
-        className="w-full max-w-md bg-white dark:bg-[#131418] border border-neutral-200 dark:border-white/[0.08] rounded-xl shadow-2xl p-6 text-[#111827] dark:text-[#f2f3f5]"
+        className="w-full max-w-md bg-white/95 dark:bg-[#121318]/95 border border-neutral-200 dark:border-white/[0.1] rounded-2xl shadow-2xl p-6 text-[#111827] dark:text-[#f9fafb] backdrop-blur-2xl"
         role="dialog"
         aria-modal="true"
       >
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
             <div
-              className={`w-9 h-9 rounded-lg flex items-center justify-center ${
+              className={`w-9 h-9 rounded-xl flex items-center justify-center ${
                 isDestructive
-                  ? 'bg-rose-500/10 text-rose-500 dark:text-rose-400 border border-rose-500/20'
-                  : 'bg-neutral-100 dark:bg-white/[0.04] text-[#111827] dark:text-[#f2f3f5] border border-neutral-200 dark:border-white/[0.08]'
+                  ? 'bg-rose-500/10 text-rose-500 dark:text-rose-400 border border-rose-500/20 shadow-[0_0_8px_rgba(239,68,68,0.2)]'
+                  : 'bg-neutral-100 dark:bg-white/[0.04] text-[#111827] dark:text-[#f9fafb] border border-neutral-200 dark:border-white/[0.08]'
               }`}
             >
               {isDestructive ? <AlertTriangle size={17} /> : <Info size={17} />}
             </div>
             <div>
-              <h3 className="text-sm font-semibold tracking-tight text-[#111827] dark:text-[#f2f3f5]">{title}</h3>
+              <h3 className="text-sm font-semibold tracking-tight text-[#111827] dark:text-[#f9fafb]">{title}</h3>
             </div>
           </div>
 
           <button
             onClick={onCancel}
-            className="text-neutral-400 dark:text-[#8a8f98] hover:text-[#111827] dark:hover:text-[#f2f3f5] transition-colors cursor-pointer p-1"
+            className="text-neutral-400 dark:text-[#8a8f98] hover:text-[#111827] dark:hover:text-[#f9fafb] transition-colors cursor-pointer p-1 rounded-md"
             aria-label="Close modal"
           >
             <X size={15} />

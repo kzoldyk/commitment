@@ -259,7 +259,7 @@ export const CommitmentDetailPage: React.FC = () => {
 
       {/* Contract Title & Description Header (Linear Unboxed Style) */}
       <div className="space-y-1.5">
-        <h1 className="text-2xl sm:text-3xl font-semibold text-[#111827] dark:text-[#f2f3f5] tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-medium text-[#111827] dark:text-[#f9fafb] tracking-tight">
           {commitment.title}
         </h1>
         {commitment.description && (
@@ -315,13 +315,13 @@ export const CommitmentDetailPage: React.FC = () => {
         <div className="lg:col-span-8 space-y-6">
           {/* Quick-Log Session if active */}
           {isCreator && isActive && todayDay && (
-            <div className="rounded-xl border border-neutral-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02] p-5 space-y-3.5 shadow-xs">
+            <div className="rounded-2xl border border-neutral-200 dark:border-white/[0.08] bg-white/90 dark:bg-[#121318]/80 backdrop-blur-xl p-5 space-y-3.5 shadow-sm">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <span className="text-xs font-mono text-neutral-500 dark:text-[#8a8f98]">
                     Today's Session ({todayDay.periodKey})
                   </span>
-                  <div className="text-base font-semibold font-mono text-[#111827] dark:text-[#f2f3f5] tabular-nums">
+                  <div className="text-base font-semibold font-mono text-[#111827] dark:text-[#f9fafb] tabular-nums">
                     {todayDay.completedValue} / {todayDay.targetValue} {commitment.rule?.targetUnit}
                   </div>
                 </div>
@@ -368,11 +368,11 @@ export const CommitmentDetailPage: React.FC = () => {
 
           {/* Daily Accountability Heatmap Matrix */}
           {commitment.days && commitment.days.length > 0 && (
-            <div className="rounded-xl border border-neutral-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02] p-5 space-y-4 shadow-xs">
+            <div className="rounded-2xl border border-neutral-200 dark:border-white/[0.08] bg-white/90 dark:bg-[#121318]/80 backdrop-blur-xl p-5 space-y-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Calendar size={14} className="text-emerald-500 dark:text-emerald-400" />
-                  <h3 className="text-sm font-semibold text-[#111827] dark:text-[#f2f3f5]">Daily Heatmap Matrix</h3>
+                  <h3 className="text-sm font-semibold text-[#111827] dark:text-[#f9fafb]">Daily Heatmap Matrix</h3>
                 </div>
                 {selectedDateFilter && (
                   <button
@@ -427,22 +427,22 @@ export const CommitmentDetailPage: React.FC = () => {
 
         {/* SIDEBAR PROPERTIES INSPECTOR (4 cols - Linear Style) */}
         <div className="lg:col-span-4 space-y-4">
-          <div className="rounded-xl border border-neutral-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02] p-4 space-y-3 shadow-xs">
-            <h3 className="text-[11px] font-mono uppercase tracking-wider text-neutral-400 dark:text-[#626670] font-semibold pb-1 border-b border-neutral-200 dark:border-white/[0.06]">
+          <div className="rounded-2xl border border-neutral-200 dark:border-white/[0.08] bg-white/90 dark:bg-[#121318]/80 backdrop-blur-xl p-5 space-y-3.5 shadow-sm">
+            <h3 className="text-[10px] font-mono uppercase tracking-widest text-neutral-400 dark:text-[#8a8f98] font-semibold pb-2 border-b border-neutral-200 dark:border-white/[0.05]">
               Properties
             </h3>
 
             <div className="space-y-2.5 text-xs font-mono">
               <div className="flex items-center justify-between py-1 border-b border-neutral-200/60 dark:border-white/[0.04]">
-                <span className="text-neutral-500 dark:text-[#626670]">Witness</span>
-                <span className="text-[#111827] dark:text-[#f2f3f5] font-medium">
+                <span className="text-neutral-500 dark:text-[#8a8f98]">Witness</span>
+                <span className="text-[#111827] dark:text-[#f9fafb] font-medium">
                   @{commitment.partner?.username}
                 </span>
               </div>
 
               <div className="flex items-center justify-between py-1 border-b border-neutral-200/60 dark:border-white/[0.04]">
-                <span className="text-neutral-500 dark:text-[#626670]">Creator</span>
-                <span className="text-[#111827] dark:text-[#f2f3f5] font-medium">
+                <span className="text-neutral-500 dark:text-[#8a8f98]">Creator</span>
+                <span className="text-[#111827] dark:text-[#f9fafb] font-medium">
                   @{commitment.creator?.username}
                 </span>
               </div>

@@ -112,19 +112,19 @@ export const SettingsPage: React.FC = () => {
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 space-y-6 select-none">
       <div>
-        <h1 className="text-xl font-semibold text-[#111827] dark:text-[#f2f3f5] tracking-tight">System preferences</h1>
+        <h1 className="text-xl font-medium text-[#111827] dark:text-[#f9fafb] tracking-tight">System preferences</h1>
         <p className="text-xs text-neutral-500 dark:text-[#8a8f98] font-mono mt-0.5">Configure evaluation timezones and notification guardrails</p>
       </div>
 
       {saved && (
-        <div className="p-3.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-mono flex items-center gap-2">
+        <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-mono flex items-center gap-2 shadow-xs">
           <Check size={14} />
           <span>Settings updated successfully.</span>
         </div>
       )}
 
       {error && (
-        <div className="p-3.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs flex items-center gap-2">
+        <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs flex items-center gap-2 shadow-xs">
           <AlertCircle size={14} className="text-rose-400 shrink-0" />
           <span>{error}</span>
         </div>
@@ -132,10 +132,10 @@ export const SettingsPage: React.FC = () => {
 
       <form onSubmit={handleSave} className="space-y-6">
         {/* Profile Settings */}
-        <div className="rounded-xl border border-neutral-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02] p-5 sm:p-6 space-y-4 shadow-xs">
-          <div className="flex items-center gap-2 pb-3 border-b border-neutral-200 dark:border-white/[0.06]">
+        <div className="rounded-2xl border border-neutral-200 dark:border-white/[0.08] bg-white/90 dark:bg-[#121318]/80 backdrop-blur-xl p-5 sm:p-6 space-y-4 shadow-sm">
+          <div className="flex items-center gap-2 pb-3 border-b border-neutral-200 dark:border-white/[0.05]">
             <User size={14} className="text-neutral-500 dark:text-[#8a8f98]" />
-            <h2 className="text-xs font-mono uppercase tracking-wider text-[#111827] dark:text-[#f2f3f5] font-semibold">
+            <h2 className="text-xs font-mono uppercase tracking-wider text-[#111827] dark:text-[#f9fafb] font-semibold">
               Profile & Evaluation Timezone
             </h2>
           </div>

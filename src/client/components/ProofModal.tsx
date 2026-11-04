@@ -186,21 +186,21 @@ export const ProofModal: React.FC<ProofModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150">
-      <div className="w-full max-w-xl bg-white dark:bg-[#131418] border border-neutral-200 dark:border-white/[0.08] rounded-xl shadow-2xl overflow-hidden relative text-[#111827] dark:text-[#f2f3f5]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-2xl animate-in fade-in duration-150">
+      <div className="w-full max-w-xl bg-white/95 dark:bg-[#121318]/95 border border-neutral-200 dark:border-white/[0.1] rounded-2xl shadow-2xl overflow-hidden relative text-[#111827] dark:text-[#f9fafb] backdrop-blur-2xl">
         {/* Sheet Header */}
-        <div className="px-5 py-3.5 bg-neutral-50 dark:bg-white/[0.02] border-b border-neutral-200 dark:border-white/[0.06] flex items-center justify-between">
+        <div className="px-5 py-3.5 bg-neutral-50 dark:bg-white/[0.02] border-b border-neutral-200 dark:border-white/[0.05] flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-5 h-5 rounded bg-amber-500/10 text-amber-500 dark:text-amber-400 border border-amber-500/20 flex items-center justify-center">
+            <div className="w-5 h-5 rounded-md bg-amber-500/10 text-amber-500 dark:text-amber-400 border border-amber-500/20 flex items-center justify-center shadow-xs">
               <Sparkles size={12} />
             </div>
-            <span className="text-xs font-semibold text-[#111827] dark:text-[#f2f3f5] tracking-tight">
+            <span className="text-xs font-semibold text-[#111827] dark:text-[#f9fafb] tracking-tight">
               Evidence & Activity Inspector
             </span>
           </div>
           <button
             onClick={onClose}
-            className="text-neutral-400 dark:text-[#8a8f98] hover:text-[#111827] dark:hover:text-[#f2f3f5] transition-colors cursor-pointer p-1 rounded-md"
+            className="text-neutral-400 dark:text-[#8a8f98] hover:text-[#111827] dark:hover:text-[#f9fafb] transition-colors cursor-pointer p-1 rounded-md"
             aria-label="Close"
           >
             <X size={15} />
@@ -213,29 +213,29 @@ export const ProofModal: React.FC<ProofModalProps> = ({
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <Calendar size={13} className="text-neutral-500 dark:text-[#8a8f98]" />
-                <span className="text-xs font-mono font-medium text-[#111827] dark:text-[#f2f3f5]">
+                <span className="text-xs font-mono font-medium text-[#111827] dark:text-[#f9fafb]">
                   {day.periodKey}
                 </span>
                 <span
                   className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-semibold ${
                     isCompleted
-                      ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
+                      ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-[0_0_6px_rgba(16,185,129,0.2)]'
                       : isMissed
                       ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20'
                       : isInProgress
-                      ? 'bg-amber-500/10 text-amber-600 dark:text-amber-300 border border-amber-500/20'
+                      ? 'bg-amber-500/10 text-amber-600 dark:text-amber-300 border border-amber-500/20 shadow-[0_0_6px_rgba(245,158,11,0.2)]'
                       : 'bg-neutral-100 dark:bg-white/[0.04] text-neutral-600 dark:text-[#8a8f98] border border-neutral-200 dark:border-white/[0.06]'
                   }`}
                 >
                   {day.status}
                 </span>
               </div>
-              <h3 className="font-semibold text-base text-[#111827] dark:text-[#f2f3f5] tracking-tight">{commitmentTitle}</h3>
+              <h3 className="font-semibold text-base text-[#111827] dark:text-[#f9fafb] tracking-tight">{commitmentTitle}</h3>
             </div>
 
             <div className="text-right shrink-0">
               <span className="text-[11px] font-mono text-neutral-500 dark:text-[#8a8f98] block">Progress</span>
-              <span className="text-sm font-mono font-bold text-[#111827] dark:text-[#f2f3f5]">
+              <span className="text-sm font-mono font-bold text-[#111827] dark:text-[#f9fafb]">
                 <span
                   className={
                     day.completedValue >= day.targetValue

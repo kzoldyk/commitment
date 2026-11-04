@@ -307,10 +307,10 @@ export const CreateCommitmentPage: React.FC = () => {
       )}
 
       {/* ================= MAIN WIZARD CANVAS (CLEAN UNBOXED CARD) ================= */}
-      <div className="rounded-xl border border-neutral-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02] p-5 sm:p-7 space-y-6 shadow-xs">
+      <div className="rounded-2xl border border-neutral-200 dark:border-white/[0.08] bg-white/90 dark:bg-[#121318]/80 backdrop-blur-xl p-5 sm:p-7 space-y-6 shadow-sm">
         {/* Step Header */}
         <div className="space-y-1">
-          <h2 className="text-lg sm:text-xl font-semibold text-[#111827] dark:text-[#f2f3f5] tracking-tight">
+          <h2 className="text-lg sm:text-xl font-medium text-[#111827] dark:text-[#f9fafb] tracking-tight">
             {step === 1 && 'What are you committing to?'}
             {step === 2 && 'Who witnesses this pact?'}
             {step === 3 && 'Review and seal covenant terms'}

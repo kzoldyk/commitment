@@ -25,12 +25,12 @@ export const MacWindow: React.FC<CardFrameProps> = ({
 }) => {
   return (
     <div
-      className={`rounded-xl bg-[var(--fc-surface)] text-[var(--fc-accent-black)] border border-[var(--fc-border-muted)] shadow-[0_1px_3px_rgba(0,0,0,0.02)] transition-all duration-150 hover:border-[var(--fc-border-loud)] ${className}`}
+      className={`rounded-2xl bg-white/95 dark:bg-[#121318]/90 text-[var(--fc-accent-black)] border border-neutral-200 dark:border-white/[0.08] shadow-sm dark:shadow-[0_16px_36px_-6px_rgba(0,0,0,0.7)] backdrop-blur-xl transition-all duration-150 hover:border-neutral-300 dark:hover:border-white/[0.14] ${className}`}
     >
       {/* Header Bar */}
       {(title || rightAction || onClose) && (
         <div
-          className={`flex items-center justify-between px-5 py-3.5 bg-[var(--fc-alpha-4)] border-b border-[var(--fc-border-faint)] select-none ${titleBarClassName}`}
+          className={`flex items-center justify-between px-5 py-3.5 bg-neutral-50/70 dark:bg-white/[0.02] border-b border-neutral-200 dark:border-white/[0.05] select-none ${titleBarClassName}`}
         >
           <div className="flex items-center gap-3 min-w-0">
             {icon && (

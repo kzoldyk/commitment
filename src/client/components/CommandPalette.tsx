@@ -196,16 +196,19 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
-      className="fixed inset-0 z-[100] flex items-start justify-center pt-24 px-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-150"
+      className="fixed inset-0 z-[100] flex items-start justify-center pt-24 sm:pt-28 px-4 bg-black/80 backdrop-blur-2xl animate-in fade-in duration-150"
     >
       <div
-        className="w-full max-w-xl bg-white dark:bg-[#131418] border border-neutral-200 dark:border-white/[0.08] rounded-xl shadow-2xl overflow-hidden text-[#111827] dark:text-[#f2f3f5]"
+        className="w-full max-w-2xl antigravity-spotlight shadow-[0_30px_90px_rgba(0,0,0,0.95)] overflow-hidden text-[#111827] dark:text-[#f9fafb] select-none animate-in zoom-in-95 duration-150"
         role="dialog"
         aria-modal="true"
       >
-        {/* Spotlight Search Header */}
-        <div className="flex items-center px-4 py-3.5 border-b border-neutral-200 dark:border-white/[0.06] gap-3">
-          <Search size={16} className="text-neutral-400 dark:text-[#8a8f98] shrink-0" />
+        {/* Ambient Top Glow Line */}
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+
+        {/* Seamless Antigravity Spotlight Search Header */}
+        <div className="flex items-center px-5 py-4 border-b border-neutral-200 dark:border-white/[0.07] gap-3.5 bg-transparent">
+          <Search size={20} className="text-neutral-400 dark:text-[#8a8f98] shrink-0" />
           <input
             ref={inputRef}
             type="text"
@@ -215,16 +218,19 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
               setSelectedIndex(0);
             }}
             onKeyDown={handleKeyDown}
-            placeholder="Type a command or search contracts..."
-            className="w-full bg-transparent text-sm font-sans text-[#111827] dark:text-[#f2f3f5] focus:outline-none placeholder:text-neutral-400 dark:placeholder:text-[#626670]"
+            placeholder="Type a command or search covenants..."
+            className="w-full bg-transparent border-0 outline-none ring-0 focus:ring-0 focus:outline-none shadow-none text-base sm:text-[17px] font-sans text-[#111827] dark:text-[#f9fafb] placeholder:text-neutral-500 tracking-tight p-0"
+            style={{ border: 'none', outline: 'none', boxShadow: 'none' }}
           />
-          <kbd className="mac-keycap text-[9px]">
-            ESC
-          </kbd>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <kbd className="px-2 py-0.5 rounded-md text-[10px] font-mono bg-neutral-100 dark:bg-white/[0.05] border border-neutral-200 dark:border-white/[0.08] text-neutral-500 dark:text-[#8a8f98]">
+              ESC
+            </kbd>
+          </div>
         </div>
 
-        {/* Command List */}
-        <div className="max-h-80 overflow-y-auto p-1.5 space-y-0.5">
+        {/* Command List with Generous Spacing & Laser Alignment */}
+        <div className="max-h-96 overflow-y-auto p-2.5 space-y-1">
           {filtered.length > 0 ? (
             filtered.map((cmd, idx) => {
               const Icon = cmd.icon;
@@ -235,57 +241,66 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
                   type="button"
                   onClick={() => cmd.run()}
                   onMouseEnter={() => setSelectedIndex(idx)}
-                  className={`w-full px-3 py-2 rounded-md flex items-center justify-between text-left transition-colors cursor-pointer ${
+                  className={`w-full px-4 py-3 rounded-xl flex items-center justify-between text-left transition-all duration-120 cursor-pointer ${
                     isSelected
-                      ? 'bg-neutral-100 dark:bg-white/[0.08] text-[#111827] dark:text-[#f2f3f5]'
-                      : 'hover:bg-neutral-50 dark:hover:bg-white/[0.04] text-neutral-600 dark:text-[#8a8f98]'
+                      ? 'bg-neutral-100 dark:bg-white/[0.08] text-[#111827] dark:text-[#f9fafb] border border-neutral-300 dark:border-white/[0.12] shadow-sm'
+                      : 'hover:bg-neutral-50 dark:hover:bg-white/[0.03] text-neutral-600 dark:text-[#8a8f98] border border-transparent'
                   }`}
                 >
-                  <div className="flex items-center gap-2.5">
+                  <div className="flex items-center gap-3.5 min-w-0">
                     <div
-                      className={`w-6 h-6 rounded flex items-center justify-center shrink-0 ${
+                      className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all ${
                         isSelected
-                          ? 'bg-neutral-200 dark:bg-white/10 text-[#111827] dark:text-[#f2f3f5]'
-                          : 'bg-neutral-100 dark:bg-white/[0.04] text-neutral-500 dark:text-[#626670]'
+                          ? 'bg-neutral-200 dark:bg-white/15 text-[#111827] dark:text-[#f9fafb] border border-neutral-300 dark:border-white/[0.15] shadow-[0_0_12px_rgba(255,255,255,0.1)]'
+                          : 'bg-neutral-100 dark:bg-white/[0.04] text-neutral-500 dark:text-[#626670] border border-neutral-200 dark:border-white/[0.05]'
                       }`}
                     >
-                      <Icon size={13} />
+                      <Icon size={16} />
                     </div>
-                    <div>
-                      <p className="text-xs font-medium text-[#111827] dark:text-[#f2f3f5] leading-tight">{cmd.title}</p>
+                    <div className="truncate">
+                      <div className="flex items-center gap-2">
+                        <p className="text-[13px] font-medium text-[#111827] dark:text-[#f9fafb] leading-tight truncate">
+                          {cmd.title}
+                        </p>
+                        <span className="text-[10px] font-mono uppercase px-1.5 py-0.2 rounded bg-white/[0.04] text-neutral-500 border border-white/[0.05]">
+                          {cmd.category}
+                        </span>
+                      </div>
                       {cmd.subtitle && (
-                        <p className="text-[11px] text-neutral-500 dark:text-[#626670] leading-tight mt-0.5 font-mono">
+                        <p className="text-[11px] text-neutral-500 dark:text-[#8a8f98] leading-tight mt-1 font-mono truncate">
                           {cmd.subtitle}
                         </p>
                       )}
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2.5 shrink-0 ml-3">
                     {cmd.shortcut && (
-                      <kbd className="mac-keycap text-[9px]">{cmd.shortcut}</kbd>
+                      <kbd className="px-2 py-0.5 rounded text-[10px] font-mono bg-neutral-200/50 dark:bg-white/[0.05] border border-neutral-300 dark:border-white/[0.08] text-neutral-600 dark:text-[#8a8f98]">
+                        {cmd.shortcut}
+                      </kbd>
                     )}
-                    {isSelected && <ArrowRight size={12} className="text-neutral-500 dark:text-[#8a8f98]" />}
+                    {isSelected && <ArrowRight size={14} className="text-neutral-400 dark:text-[#f9fafb]" />}
                   </div>
                 </button>
               );
             })
           ) : (
-            <div className="p-6 text-center text-xs font-mono text-neutral-400 dark:text-[#626670]">
-              No matching commands or contracts
+            <div className="py-12 text-center text-xs font-mono text-neutral-400 dark:text-[#626670]">
+              No matching commands or contracts found
             </div>
           )}
         </div>
 
         {/* Footer Hint */}
-        <div className="px-4 py-2 border-t border-neutral-200 dark:border-white/[0.06] bg-neutral-50 dark:bg-white/[0.02] flex items-center justify-between text-[11px] font-mono text-neutral-500 dark:text-[#626670]">
-          <div className="flex items-center gap-3">
-            <span>↑↓ Navigate</span>
-            <span>↵ Select</span>
-            <span>Esc Dismiss</span>
+        <div className="px-5 py-3 border-t border-neutral-200 dark:border-white/[0.06] bg-neutral-50/50 dark:bg-black/40 flex items-center justify-between text-[11px] font-mono text-neutral-500 dark:text-[#626670]">
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-1.5"><kbd className="text-[10px] text-neutral-400">↑↓</kbd> navigate</span>
+            <span className="flex items-center gap-1.5"><kbd className="text-[10px] text-neutral-400">↵</kbd> execute</span>
+            <span className="flex items-center gap-1.5"><kbd className="text-[10px] text-neutral-400">esc</kbd> close</span>
           </div>
-          <span className="flex items-center gap-1 text-neutral-600 dark:text-[#8a8f98]">
-            <Command size={11} /> ⌘K Palette
+          <span className="flex items-center gap-1.5 text-neutral-600 dark:text-[#8a8f98]">
+            <Command size={11} /> Spotlight
           </span>
         </div>
       </div>

@@ -125,10 +125,10 @@ export const MacOSWindowFrame: React.FC<MacOSWindowFrameProps> = ({
   // Authenticated View: Linear Layout with Closable Left Navigation Sidebar (Dual Theme)
   if (user) {
     return (
-      <div className="w-full h-screen min-h-screen flex bg-[#f7f8f9] dark:bg-[#0d0e12] text-[#111827] dark:text-[#f2f3f5] overflow-hidden font-sans select-none antialiased">
+      <div className="w-full h-screen min-h-screen flex bg-[#f7f8f9] dark:bg-[#07080b] text-[#111827] dark:text-[#f9fafb] overflow-hidden font-sans select-none antialiased">
         {/* ================= CLOSABLE LINEAR LEFT SIDEBAR ================= */}
         <aside
-          className={`shrink-0 h-screen bg-[#f4f5f6] dark:bg-[#090a0d] border-r border-neutral-200 dark:border-white/[0.06] flex flex-col justify-between z-30 transition-all duration-200 ease-in-out ${
+          className={`shrink-0 h-screen bg-[#f4f5f6] dark:bg-[#08090d] border-r border-neutral-200 dark:border-white/[0.05] flex flex-col justify-between z-30 transition-all duration-200 ease-in-out ${
             sidebarOpen ? 'w-60 opacity-100' : 'w-0 opacity-0 -translate-x-full overflow-hidden border-none pointer-events-none'
           }`}
         >
@@ -136,11 +136,11 @@ export const MacOSWindowFrame: React.FC<MacOSWindowFrameProps> = ({
             {/* Workspace Header Switcher */}
             <div className="h-11 flex items-center justify-between px-3 border-b border-neutral-200 dark:border-white/[0.04]">
               <Link to="/dashboard" className="flex items-center gap-2 group min-w-0">
-                <div className="w-5 h-5 rounded-[4px] bg-neutral-200/60 dark:bg-white/[0.06] border border-neutral-300 dark:border-white/[0.1] flex items-center justify-center overflow-hidden shrink-0">
+                <div className="w-5 h-5 rounded-[5px] bg-neutral-200/60 dark:bg-white/[0.06] border border-neutral-300 dark:border-white/[0.09] flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
                   <img src="/logo-mark.png" alt="Seal" className="w-3.5 h-3.5 object-contain" />
                 </div>
                 <div className="flex items-center gap-1 min-w-0">
-                  <span className="font-medium text-[13px] text-[#111827] dark:text-[#f2f3f5] truncate">Commitment</span>
+                  <span className="font-medium text-[13px] text-[#111827] dark:text-[#f9fafb] truncate">Commitment</span>
                   <ChevronDown size={12} className="text-neutral-400 dark:text-[#626670] shrink-0" />
                 </div>
               </Link>
@@ -149,14 +149,14 @@ export const MacOSWindowFrame: React.FC<MacOSWindowFrameProps> = ({
                 <button
                   type="button"
                   onClick={onOpenCommandPalette}
-                  className="p-1 rounded hover:bg-neutral-200/50 dark:hover:bg-white/[0.06] hover:text-[#111827] dark:hover:text-[#f2f3f5] transition-colors cursor-pointer"
+                  className="p-1 rounded hover:bg-neutral-200/50 dark:hover:bg-white/[0.06] hover:text-[#111827] dark:hover:text-[#f9fafb] transition-colors cursor-pointer"
                   title="Search (⌘K)"
                 >
                   <Search size={14} />
                 </button>
                 <Link
                   to="/create"
-                  className="p-1 rounded hover:bg-neutral-200/50 dark:hover:bg-white/[0.06] hover:text-[#111827] dark:hover:text-[#f2f3f5] transition-colors cursor-pointer"
+                  className="p-1 rounded hover:bg-neutral-200/50 dark:hover:bg-white/[0.06] hover:text-[#111827] dark:hover:text-[#f9fafb] transition-colors cursor-pointer"
                   title="New contract (⌘N)"
                 >
                   <Plus size={15} />
@@ -164,7 +164,7 @@ export const MacOSWindowFrame: React.FC<MacOSWindowFrameProps> = ({
                 <button
                   type="button"
                   onClick={toggleSidebar}
-                  className="p-1 rounded hover:bg-neutral-200/50 dark:hover:bg-white/[0.06] hover:text-[#111827] dark:hover:text-[#f2f3f5] transition-colors cursor-pointer"
+                  className="p-1 rounded hover:bg-neutral-200/50 dark:hover:bg-white/[0.06] hover:text-[#111827] dark:hover:text-[#f9fafb] transition-colors cursor-pointer"
                   title="Close sidebar (⌘[)"
                   aria-label="Close sidebar"
                 >
@@ -179,8 +179,8 @@ export const MacOSWindowFrame: React.FC<MacOSWindowFrameProps> = ({
                 to="/dashboard"
                 className={`flex items-center justify-between px-2.5 py-1.5 rounded-md transition-colors ${
                   location.pathname === '/' || location.pathname === '/dashboard'
-                    ? 'bg-neutral-200/70 dark:bg-white/[0.08] text-[#111827] dark:text-[#f2f3f5] font-medium'
-                    : 'hover:bg-neutral-200/40 dark:hover:bg-white/[0.04] hover:text-[#111827] dark:hover:text-[#f2f3f5]'
+                    ? 'bg-neutral-200/70 dark:bg-white/[0.08] text-[#111827] dark:text-[#f9fafb] font-medium'
+                    : 'hover:bg-neutral-200/40 dark:hover:bg-white/[0.04] hover:text-[#111827] dark:hover:text-[#f9fafb]'
                 }`}
               >
                 <div className="flex items-center gap-2">
@@ -198,8 +198,8 @@ export const MacOSWindowFrame: React.FC<MacOSWindowFrameProps> = ({
                 to="/create"
                 className={`flex items-center gap-2 px-2.5 py-1.5 rounded-md transition-colors ${
                   location.pathname === '/create'
-                    ? 'bg-neutral-200/70 dark:bg-white/[0.08] text-[#111827] dark:text-[#f2f3f5] font-medium'
-                    : 'hover:bg-neutral-200/40 dark:hover:bg-white/[0.04] hover:text-[#111827] dark:hover:text-[#f2f3f5]'
+                    ? 'bg-neutral-200/70 dark:bg-white/[0.08] text-[#111827] dark:text-[#f9fafb] font-medium'
+                    : 'hover:bg-neutral-200/40 dark:hover:bg-white/[0.04] hover:text-[#111827] dark:hover:text-[#f9fafb]'
                 }`}
               >
                 <PlusCircle size={14} className="text-neutral-400 dark:text-[#626670]" />
@@ -210,8 +210,8 @@ export const MacOSWindowFrame: React.FC<MacOSWindowFrameProps> = ({
                 to="/settings"
                 className={`flex items-center gap-2 px-2.5 py-1.5 rounded-md transition-colors ${
                   location.pathname === '/settings'
-                    ? 'bg-neutral-200/70 dark:bg-white/[0.08] text-[#111827] dark:text-[#f2f3f5] font-medium'
-                    : 'hover:bg-neutral-200/40 dark:hover:bg-white/[0.04] hover:text-[#111827] dark:hover:text-[#f2f3f5]'
+                    ? 'bg-neutral-200/70 dark:bg-white/[0.08] text-[#111827] dark:text-[#f9fafb] font-medium'
+                    : 'hover:bg-neutral-200/40 dark:hover:bg-white/[0.04] hover:text-[#111827] dark:hover:text-[#f9fafb]'
                 }`}
               >
                 <Sliders size={14} className="text-neutral-400 dark:text-[#626670]" />
@@ -233,7 +233,7 @@ export const MacOSWindowFrame: React.FC<MacOSWindowFrameProps> = ({
                 {sidebarContracts.length === 0 ? (
                   <Link
                     to="/create"
-                    className="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 dark:text-[#626670] hover:text-[#111827] dark:hover:text-[#f2f3f5] hover:bg-neutral-200/40 dark:hover:bg-white/[0.04] transition-colors"
+                    className="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-neutral-400 dark:text-[#626670] hover:text-[#111827] dark:hover:text-[#f9fafb] hover:bg-neutral-200/40 dark:hover:bg-white/[0.04] transition-colors"
                   >
                     <Plus size={12} />
                     <span>Forge a covenant</span>
@@ -247,16 +247,16 @@ export const MacOSWindowFrame: React.FC<MacOSWindowFrameProps> = ({
                         to={`/commitments/${c.id}`}
                         className={`flex items-center gap-2 px-2.5 py-1.5 rounded-md transition-colors ${
                           isCurrent
-                            ? 'bg-neutral-200/80 dark:bg-[#1b1c22] text-[#111827] dark:text-[#f2f3f5] font-medium'
-                            : 'text-neutral-600 dark:text-[#8a8f98] hover:bg-neutral-200/40 dark:hover:bg-white/[0.04] hover:text-[#111827] dark:hover:text-[#f2f3f5]'
+                            ? 'bg-neutral-200/80 dark:bg-[#121318] text-[#111827] dark:text-[#f9fafb] font-medium border border-transparent dark:border-white/[0.08]'
+                            : 'text-neutral-600 dark:text-[#8a8f98] hover:bg-neutral-200/40 dark:hover:bg-white/[0.04] hover:text-[#111827] dark:hover:text-[#f9fafb]'
                         }`}
                         title={c.title}
                       >
                         <div
                           className={`w-2 h-2 rounded-full shrink-0 ${
                             c.isCompleted
-                              ? 'bg-emerald-500 dark:bg-emerald-400'
-                              : 'border border-amber-500/80 bg-amber-500/20'
+                              ? 'bg-emerald-500 dark:bg-emerald-400 shadow-[0_0_6px_rgba(16,185,129,0.4)]'
+                              : 'border border-amber-500/80 bg-amber-500/20 shadow-[0_0_6px_rgba(245,158,11,0.25)]'
                           }`}
                         />
                         <span className="truncate">{c.title}</span>
@@ -269,9 +269,9 @@ export const MacOSWindowFrame: React.FC<MacOSWindowFrameProps> = ({
           </div>
 
           {/* Sidebar Footer: User Account, Theme & Logout */}
-          <div className="p-2 border-t border-neutral-200 dark:border-white/[0.06] flex items-center justify-between text-xs">
+          <div className="p-2 border-t border-neutral-200 dark:border-white/[0.05] flex items-center justify-between text-xs">
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-6 h-6 rounded-full bg-neutral-200 dark:bg-white/[0.08] border border-neutral-300 dark:border-white/[0.1] flex items-center justify-center font-mono text-[11px] text-[#111827] dark:text-[#f2f3f5] shrink-0 font-medium">
+              <div className="w-6 h-6 rounded-full bg-neutral-200 dark:bg-white/[0.08] border border-neutral-300 dark:border-white/[0.1] flex items-center justify-center font-mono text-[11px] text-[#111827] dark:text-[#f9fafb] shrink-0 font-medium">
                 {user.username.charAt(0).toUpperCase()}
               </div>
               <span className="font-mono text-neutral-600 dark:text-[#8a8f98] truncate max-w-[100px]">
@@ -284,7 +284,7 @@ export const MacOSWindowFrame: React.FC<MacOSWindowFrameProps> = ({
               <button
                 type="button"
                 onClick={toggleTheme}
-                className="p-1.5 rounded hover:bg-neutral-200/50 dark:hover:bg-white/[0.06] hover:text-[#111827] dark:hover:text-[#f2f3f5] transition-colors cursor-pointer"
+                className="p-1.5 rounded hover:bg-neutral-200/50 dark:hover:bg-white/[0.06] hover:text-[#111827] dark:hover:text-[#f9fafb] transition-colors cursor-pointer"
                 title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} mode`}
                 aria-label="Toggle theme"
               >
@@ -306,23 +306,23 @@ export const MacOSWindowFrame: React.FC<MacOSWindowFrameProps> = ({
         </aside>
 
         {/* ================= MAIN APPLICATION CANVAS ================= */}
-        <div className="flex-1 h-screen flex flex-col bg-[#f7f8f9] dark:bg-[#0d0e12] overflow-hidden">
+        <div className="flex-1 h-screen flex flex-col bg-[#f7f8f9] dark:bg-[#07080b] overflow-hidden">
           {/* Top Breadcrumb & Actions Bar (Linear Style) */}
-          <header className="h-11 border-b border-neutral-200 dark:border-white/[0.06] flex items-center justify-between px-4 sm:px-5 bg-[#f7f8f9] dark:bg-[#0d0e12] select-none shrink-0 z-20">
+          <header className="h-11 border-b border-neutral-200 dark:border-white/[0.05] flex items-center justify-between px-4 sm:px-5 bg-[#f7f8f9]/90 dark:bg-[#07080b]/85 backdrop-blur-xl select-none shrink-0 z-20">
             {/* Left: Sidebar Toggle + Issue / Context Breadcrumb */}
             <div className="flex items-center gap-2.5 text-xs text-neutral-500 dark:text-[#8a8f98]">
               <button
                 type="button"
                 onClick={toggleSidebar}
-                className="p-1 -ml-1 rounded hover:bg-neutral-200/50 dark:hover:bg-white/[0.06] hover:text-[#111827] dark:hover:text-[#f2f3f5] transition-colors cursor-pointer text-neutral-500 dark:text-[#8a8f98]"
+                className="p-1 -ml-1 rounded hover:bg-neutral-200/50 dark:hover:bg-white/[0.06] hover:text-[#111827] dark:hover:text-[#f9fafb] transition-colors cursor-pointer text-neutral-500 dark:text-[#8a8f98]"
                 title={sidebarOpen ? 'Collapse sidebar (⌘[)' : 'Expand sidebar (⌘[)'}
                 aria-label="Toggle sidebar"
               >
                 <PanelLeft size={15} />
               </button>
 
-              <div className="w-2 h-2 rounded-full border border-amber-500 bg-amber-500/20 shrink-0" />
-              <span className="font-medium text-[#111827] dark:text-[#f2f3f5]">
+              <div className="w-2 h-2 rounded-full border border-amber-500 bg-amber-500/20 shadow-[0_0_6px_rgba(245,158,11,0.3)] shrink-0" />
+              <span className="font-medium text-[#111827] dark:text-[#f9fafb]">
                 {location.pathname.startsWith('/commitments')
                   ? 'Commitment Inspector'
                   : location.pathname === '/create'
@@ -332,33 +332,23 @@ export const MacOSWindowFrame: React.FC<MacOSWindowFrameProps> = ({
                   : 'Contracts'}
               </span>
               <Star size={12} className="text-amber-500 fill-amber-500/20 cursor-pointer" />
-              <MoreHorizontal size={13} className="text-neutral-400 dark:text-[#626670] hover:text-[#111827] dark:hover:text-[#f2f3f5] cursor-pointer" />
+              <MoreHorizontal size={13} className="text-neutral-400 dark:text-[#626670] hover:text-[#111827] dark:hover:text-[#f9fafb] cursor-pointer" />
             </div>
 
             {/* Right: Cutoff Countdown, Pagination & Action Button */}
             <div className="flex items-center gap-2.5 sm:gap-3 text-xs">
               <div
-                className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-white dark:bg-white/[0.04] border border-neutral-200 dark:border-white/[0.06] font-mono text-[11px] text-neutral-600 dark:text-[#8a8f98]"
+                className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white dark:bg-white/[0.03] border border-neutral-200 dark:border-white/[0.06] font-mono text-[11px] text-neutral-600 dark:text-[#8a8f98] shadow-xs backdrop-blur-sm"
                 title="Time remaining until daily midnight evaluation cutoff"
               >
                 <Clock size={11} className="text-amber-500" />
-                <span>Cutoff: <strong className="text-[#111827] dark:text-[#f2f3f5] font-medium tabular-nums">{cutoffCountdown || '...'}</strong></span>
-              </div>
-
-              <div className="hidden sm:flex items-center gap-1 text-neutral-400 dark:text-[#626670] font-mono text-[11px]">
-                <span>1 / 84</span>
-                <button className="p-0.5 hover:text-[#111827] dark:hover:text-[#f2f3f5] cursor-pointer" aria-label="Previous contract">
-                  <ChevronUp size={12} />
-                </button>
-                <button className="p-0.5 hover:text-[#111827] dark:hover:text-[#f2f3f5] cursor-pointer" aria-label="Next contract">
-                  <ChevronDown size={12} />
-                </button>
+                <span>Cutoff: <strong className="text-[#111827] dark:text-[#f9fafb] font-medium tabular-nums">{cutoffCountdown || '...'}</strong></span>
               </div>
 
               <button
                 type="button"
                 onClick={onOpenCommandPalette}
-                className="hidden md:flex items-center gap-1.5 px-2 py-1 rounded bg-white dark:bg-white/[0.04] hover:bg-neutral-100 dark:hover:bg-white/[0.08] text-neutral-600 dark:text-[#8a8f98] hover:text-[#111827] dark:hover:text-[#f2f3f5] transition-colors border border-neutral-200 dark:border-white/[0.06] text-xs cursor-pointer"
+                className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white dark:bg-white/[0.03] hover:bg-neutral-100 dark:hover:bg-white/[0.07] text-neutral-600 dark:text-[#8a8f98] hover:text-[#111827] dark:hover:text-[#f9fafb] transition-colors border border-neutral-200 dark:border-white/[0.06] text-xs cursor-pointer shadow-xs"
                 title="Command Palette (⌘K)"
               >
                 <Search size={12} />
@@ -376,7 +366,7 @@ export const MacOSWindowFrame: React.FC<MacOSWindowFrameProps> = ({
           </header>
 
           {/* Main Scrollable Workspace Body */}
-          <main className="flex-1 w-full overflow-y-auto bg-[#f7f8f9] dark:bg-[#0d0e12] text-[#111827] dark:text-[#f2f3f5]">
+          <main className="flex-1 w-full overflow-y-auto bg-[#f7f8f9] dark:bg-[#07080b] text-[#111827] dark:text-[#f9fafb]">
             {children}
           </main>
         </div>
@@ -386,18 +376,18 @@ export const MacOSWindowFrame: React.FC<MacOSWindowFrameProps> = ({
 
   // Guest View: Clean Top Navigation without Sidebar
   return (
-    <div className="w-full h-screen min-h-screen flex flex-col bg-[#f7f8f9] dark:bg-[#0d0e12] text-[#111827] dark:text-[#f2f3f5] overflow-hidden font-sans select-none antialiased">
-      <header className="h-12 bg-[#f7f8f9] dark:bg-[#0d0e12] border-b border-neutral-200 dark:border-white/[0.06] flex items-center justify-between px-4 sm:px-6 select-none shrink-0 z-40">
+    <div className="w-full h-screen min-h-screen flex flex-col bg-[#f7f8f9] dark:bg-[#07080b] text-[#111827] dark:text-[#f9fafb] overflow-hidden font-sans select-none antialiased">
+      <header className="h-12 bg-[#f7f8f9]/90 dark:bg-[#07080b]/85 backdrop-blur-xl border-b border-neutral-200 dark:border-white/[0.05] flex items-center justify-between px-4 sm:px-6 select-none shrink-0 z-40">
         <div className="flex items-center gap-6">
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-6 h-6 rounded-md bg-neutral-200/60 dark:bg-white/[0.06] border border-neutral-300 dark:border-white/[0.1] flex items-center justify-center overflow-hidden">
+            <div className="w-6 h-6 rounded-md bg-neutral-200/60 dark:bg-white/[0.06] border border-neutral-300 dark:border-white/[0.1] flex items-center justify-center overflow-hidden shadow-sm">
               <img src="/logo-mark.png" alt="Commitment Seal" className="w-4 h-4 object-contain" />
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="font-semibold text-[#111827] dark:text-[#f2f3f5] tracking-tight text-[13px]">
+              <span className="font-semibold text-[#111827] dark:text-[#f9fafb] tracking-tight text-[13px]">
                 Commitment
               </span>
-              <span className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono uppercase bg-neutral-100 dark:bg-white/[0.05] text-neutral-600 dark:text-[#8a8f98] border border-neutral-200 dark:border-white/[0.06]">
+              <span className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono uppercase bg-neutral-100 dark:bg-white/[0.04] text-neutral-600 dark:text-[#8a8f98] border border-neutral-200 dark:border-white/[0.06]">
                 Contract OS
               </span>
             </div>
@@ -408,21 +398,21 @@ export const MacOSWindowFrame: React.FC<MacOSWindowFrameProps> = ({
               to="/"
               className={`px-2.5 py-1 rounded-md transition-colors ${
                 location.pathname === '/'
-                  ? 'bg-neutral-200/70 dark:bg-white/[0.08] text-[#111827] dark:text-[#f2f3f5]'
-                  : 'hover:text-[#111827] dark:hover:text-[#f2f3f5] hover:bg-neutral-200/40 dark:hover:bg-white/[0.04]'
+                  ? 'bg-neutral-200/70 dark:bg-white/[0.08] text-[#111827] dark:text-[#f9fafb]'
+                  : 'hover:text-[#111827] dark:hover:text-[#f9fafb] hover:bg-neutral-200/40 dark:hover:bg-white/[0.04]'
               }`}
             >
               Simulator
             </Link>
             <Link
               to="/login"
-              className="px-2.5 py-1 rounded-md hover:text-[#111827] dark:hover:text-[#f2f3f5] hover:bg-neutral-200/40 dark:hover:bg-white/[0.04] transition-colors"
+              className="px-2.5 py-1 rounded-md hover:text-[#111827] dark:hover:text-[#f9fafb] hover:bg-neutral-200/40 dark:hover:bg-white/[0.04] transition-colors"
             >
               Sign In
             </Link>
             <Link
               to="/register"
-              className="px-2.5 py-1 rounded-md hover:text-[#111827] dark:hover:text-[#f2f3f5] hover:bg-neutral-200/40 dark:hover:bg-white/[0.04] transition-colors"
+              className="px-2.5 py-1 rounded-md hover:text-[#111827] dark:hover:text-[#f9fafb] hover:bg-neutral-200/40 dark:hover:bg-white/[0.04] transition-colors"
             >
               Get Started
             </Link>
@@ -433,7 +423,7 @@ export const MacOSWindowFrame: React.FC<MacOSWindowFrameProps> = ({
           <button
             type="button"
             onClick={onOpenCommandPalette}
-            className="flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-white dark:bg-white/[0.04] hover:bg-neutral-100 dark:hover:bg-white/[0.08] text-xs text-neutral-600 dark:text-[#8a8f98] hover:text-[#111827] dark:hover:text-[#f2f3f5] transition-colors cursor-pointer border border-neutral-200 dark:border-white/[0.06]"
+            className="flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-white dark:bg-white/[0.03] hover:bg-neutral-100 dark:hover:bg-white/[0.07] text-xs text-neutral-600 dark:text-[#8a8f98] hover:text-[#111827] dark:hover:text-[#f9fafb] transition-colors cursor-pointer border border-neutral-200 dark:border-white/[0.06] shadow-xs"
             title="Search or execute command (⌘K)"
           >
             <Search size={13} />
@@ -444,7 +434,7 @@ export const MacOSWindowFrame: React.FC<MacOSWindowFrameProps> = ({
           <button
             type="button"
             onClick={toggleTheme}
-            className="p-1.5 rounded-md hover:bg-neutral-200/50 dark:hover:bg-white/[0.06] text-neutral-600 dark:text-[#8a8f98] hover:text-[#111827] dark:hover:text-[#f2f3f5] transition-colors cursor-pointer border border-neutral-200 dark:border-white/[0.06]"
+            className="p-1.5 rounded-md hover:bg-neutral-200/50 dark:hover:bg-white/[0.06] text-neutral-600 dark:text-[#8a8f98] hover:text-[#111827] dark:hover:text-[#f9fafb] transition-colors cursor-pointer border border-neutral-200 dark:border-white/[0.06]"
             title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} mode`}
             aria-label="Toggle theme"
           >
@@ -460,7 +450,7 @@ export const MacOSWindowFrame: React.FC<MacOSWindowFrameProps> = ({
         </div>
       </header>
 
-      <main className="flex-1 w-full overflow-y-auto bg-[#f7f8f9] dark:bg-[#0d0e12] text-[#111827] dark:text-[#f2f3f5]">
+      <main className="flex-1 w-full overflow-y-auto bg-[#f7f8f9] dark:bg-[#07080b] text-[#111827] dark:text-[#f9fafb]">
         {children}
       </main>
     </div>

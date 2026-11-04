@@ -24,6 +24,7 @@ import { LivesIndicator } from '../components/LivesIndicator';
 import { StreakBadge } from '../components/StreakBadge';
 import { ProofModal } from '../components/ProofModal';
 import { ConfirmModal } from '../components/ConfirmModal';
+import { AntigravityActionDock } from '../components/AntigravityActionDock';
 
 export const DashboardPage: React.FC = () => {
   const { user } = useAuth();
@@ -212,19 +213,22 @@ export const DashboardPage: React.FC = () => {
   const pendingSent = data?.pendingInvitations.filter((p) => p.isCreator) || [];
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 pb-40 space-y-7 relative">
+      {/* Top Subtle Ambient Glow Halo */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-32 bg-gradient-to-b from-indigo-500/[0.07] via-white/[0.01] to-transparent pointer-events-none blur-3xl -z-10" />
+
       {/* Top Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-200 dark:border-white/[0.06] pb-5">
         <div>
-          <h1 className="text-xl sm:text-2xl font-semibold text-[#111827] dark:text-[#f2f3f5] tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-medium text-[#111827] dark:text-[#f9fafb] tracking-tight">
             Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening'}, {user?.displayName || user?.username}.
           </h1>
-          <p className="text-xs text-neutral-500 dark:text-[#8a8f98] font-mono mt-1 flex items-center gap-2">
-            <span>Account: <strong className="text-[#111827] dark:text-[#f2f3f5] font-medium">{user?.username}</strong></span>
+          <p className="text-xs text-neutral-500 dark:text-[#8a8f98] font-mono mt-1 flex flex-wrap items-center gap-2">
+            <span>Account: <strong className="text-[#111827] dark:text-[#f9fafb] font-medium">@{user?.username}</strong></span>
             <span>·</span>
-            <span>Today: <strong className="text-[#111827] dark:text-[#f2f3f5] font-medium">{data?.todayDate}</strong></span>
+            <span>Date: <strong className="text-[#111827] dark:text-[#f9fafb] font-medium">{data?.todayDate}</strong></span>
             <span>·</span>
-            <span>Timezone: <strong className="text-[#111827] dark:text-[#f2f3f5] font-medium">{data?.userTimezone}</strong></span>
+            <span>Zone: <strong className="text-[#111827] dark:text-[#f9fafb] font-medium">{data?.userTimezone}</strong></span>
           </p>
         </div>
 
@@ -242,7 +246,7 @@ export const DashboardPage: React.FC = () => {
 
           <Link
             to="/create"
-            className="mac-btn-primary !text-xs !py-1.5 !px-3.5 font-medium cursor-pointer"
+            className="mac-btn-primary !text-xs !py-1.5 !px-3.5 font-medium cursor-pointer shadow-sm"
           >
             <Plus size={14} />
             <span>New contract</span>
@@ -251,52 +255,55 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {evalMessage && (
-        <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs font-mono flex items-center justify-between animate-in fade-in">
+        <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-700 dark:text-emerald-300 text-xs font-mono flex items-center justify-between animate-in fade-in shadow-xs">
           <span>{evalMessage}</span>
           <button onClick={() => setEvalMessage(null)} className="text-emerald-600 dark:text-emerald-400 hover:opacity-75 cursor-pointer">✕</button>
         </div>
       )}
 
-      {/* Stats Summary Bar (Linear KPI Tiles) */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="p-3.5 rounded-lg border border-neutral-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02]">
-          <span className="text-[11px] font-mono uppercase tracking-wider text-neutral-400 dark:text-[#626670] block mb-1">
+      {/* Unified Telemetry KPI Instrument Panel (No double-boxing or heavy cards) */}
+      <div className="antigravity-capsule grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-white/[0.06] p-1.5 shadow-xl">
+        <div className="p-4 flex flex-col justify-between">
+          <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-400 dark:text-[#8a8f98] block mb-1">
             Active Contracts
           </span>
-          <span className="text-2xl font-semibold font-mono text-[#111827] dark:text-[#f2f3f5] tabular-nums">
-            {data?.stats.activeCount || 0}
-          </span>
+          <div className="flex items-baseline gap-2">
+            <span className="text-2xl sm:text-3xl font-semibold font-mono text-[#111827] dark:text-[#f9fafb] tabular-nums tracking-tight">
+              {data?.stats.activeCount || 0}
+            </span>
+            <span className="text-[11px] font-mono text-emerald-400">Live</span>
+          </div>
         </div>
 
-        <div className="p-3.5 rounded-lg border border-neutral-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02]">
-          <span className="text-[11px] font-mono uppercase tracking-wider text-neutral-400 dark:text-[#626670] block mb-1">
+        <div className="p-4 flex flex-col justify-between">
+          <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-400 dark:text-[#8a8f98] block mb-1">
             Highest Streak
           </span>
           <div className="flex items-center gap-2">
-            <span className="text-2xl font-semibold font-mono text-amber-500 dark:text-amber-400 tabular-nums">
+            <span className="text-2xl sm:text-3xl font-semibold font-mono text-amber-500 dark:text-amber-300 tabular-nums tracking-tight">
               {data?.stats.highestStreak || 0}
             </span>
-            <Flame size={16} className="text-amber-500 fill-amber-500/20" />
+            <Flame size={18} className="text-amber-500 fill-amber-500/20 animate-pulse" />
           </div>
         </div>
 
-        <div className="p-3.5 rounded-lg border border-neutral-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02]">
-          <span className="text-[11px] font-mono uppercase tracking-wider text-neutral-400 dark:text-[#626670] block mb-1">
+        <div className="p-4 flex flex-col justify-between">
+          <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-400 dark:text-[#8a8f98] block mb-1">
             Successful Days
           </span>
           <div className="flex items-center gap-2">
-            <span className="text-2xl font-semibold font-mono text-emerald-600 dark:text-emerald-400 tabular-nums">
+            <span className="text-2xl sm:text-3xl font-semibold font-mono text-emerald-600 dark:text-emerald-400 tabular-nums tracking-tight">
               {data?.stats.totalSuccessfulDays || 0}
             </span>
-            <CheckCircle2 size={16} className="text-emerald-600 dark:text-emerald-400" />
+            <CheckCircle2 size={18} className="text-emerald-600 dark:text-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.3)] rounded-full" />
           </div>
         </div>
 
-        <div className="p-3.5 rounded-lg border border-neutral-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02]">
-          <span className="text-[11px] font-mono uppercase tracking-wider text-neutral-400 dark:text-[#626670] block mb-1">
+        <div className="p-4 flex flex-col justify-between">
+          <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-400 dark:text-[#8a8f98] block mb-1">
             Pending Invites
           </span>
-          <span className="text-2xl font-semibold font-mono text-neutral-500 dark:text-[#8a8f98] tabular-nums">
+          <span className="text-2xl sm:text-3xl font-semibold font-mono text-neutral-500 dark:text-[#8a8f98] tabular-nums tracking-tight">
             {data?.stats.pendingInvitesCount || 0}
           </span>
         </div>
@@ -395,7 +402,7 @@ export const DashboardPage: React.FC = () => {
               return (
                 <div
                   key={c.id}
-                  className="group rounded-xl border border-neutral-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02] hover:border-neutral-300 dark:hover:border-white/[0.14] p-5 transition-all duration-150 flex flex-col justify-between gap-4 shadow-xs"
+                  className="group antigravity-capsule p-5 sm:p-6 transition-all duration-200 flex flex-col justify-between gap-4.5 hover:border-white/[0.18]"
                 >
                   {/* Card Header: Status Glyph, Title & Partner Pill */}
                   <div className="flex items-start justify-between gap-3">
@@ -404,13 +411,13 @@ export const DashboardPage: React.FC = () => {
                         <span
                           className={`w-2 h-2 rounded-full shrink-0 ${
                             isTodayCompleted
-                              ? 'bg-emerald-500 dark:bg-emerald-400'
-                              : 'border border-amber-500/80 bg-amber-500/20'
+                              ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.7)]'
+                              : 'border border-amber-400/80 bg-amber-400/20 shadow-[0_0_8px_rgba(245,158,11,0.4)] animate-pulse'
                           }`}
                         />
                         <Link
                           to={`/commitments/${c.id}`}
-                          className="text-sm font-semibold tracking-tight text-[#111827] dark:text-[#f2f3f5] hover:underline truncate transition-colors"
+                          className="text-sm sm:text-base font-semibold tracking-tight text-[#111827] dark:text-[#f9fafb] hover:text-emerald-400 truncate transition-colors"
                         >
                           {c.title}
                         </Link>
@@ -420,35 +427,35 @@ export const DashboardPage: React.FC = () => {
                       </p>
                     </div>
 
-                    <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-neutral-100 dark:bg-white/[0.04] text-neutral-600 dark:text-[#8a8f98] border border-neutral-200 dark:border-white/[0.06] shrink-0">
+                    <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-lg bg-white/[0.04] text-neutral-400 border border-white/[0.06] shrink-0">
                       {c.isCreator ? `@${c.partner?.username}` : `@${c.creator?.username}`}
                     </span>
                   </div>
 
-                  {/* Middle: Today's Target Status & Micro-Progress Track */}
-                  <div className="p-3 rounded-lg bg-neutral-50 dark:bg-white/[0.03] border border-neutral-200 dark:border-white/[0.06] space-y-2">
+                  {/* Middle: Integrated Progress Track (No double-boxing or heavy inner borders) */}
+                  <div className="space-y-2 py-1">
                     <div className="flex items-center justify-between text-xs font-mono">
-                      <span className="text-neutral-500 dark:text-[#8a8f98]">
+                      <span className="text-neutral-400">
                         {progressLabel}
                       </span>
-                      <span className={`font-semibold tabular-nums ${isTodayCompleted ? 'text-emerald-600 dark:text-emerald-400' : completedVal > 0 ? 'text-amber-500 dark:text-amber-400' : 'text-neutral-500 dark:text-[#8a8f98]'}`}>
+                      <span className={`font-semibold tabular-nums ${isTodayCompleted ? 'text-emerald-400' : completedVal > 0 ? 'text-amber-400' : 'text-neutral-400'}`}>
                         {completedVal} / {targetVal} {c.rule?.targetUnit} {isTodayCompleted && '(Done ✓)'}
                       </span>
                     </div>
-                    <div className="w-full h-1 bg-neutral-200 dark:bg-white/[0.06] rounded-full overflow-hidden">
+                    <div className="w-full h-1.5 bg-neutral-200 dark:bg-white/[0.06] rounded-full overflow-hidden">
                       <div
-                        className={`h-full transition-all duration-300 rounded-full ${
+                        className={`h-full transition-all duration-500 rounded-full ${
                           isTodayCompleted
-                            ? 'bg-emerald-500 dark:bg-emerald-400'
+                            ? 'bg-gradient-to-r from-emerald-500 to-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]'
                             : completedVal > 0
-                            ? 'bg-amber-500 dark:bg-amber-400'
+                            ? 'bg-gradient-to-r from-amber-500 to-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.6)]'
                             : 'bg-neutral-300 dark:bg-white/[0.1]'
                         }`}
                         style={{ width: `${progressPct}%` }}
                       />
                     </div>
                     {isFuture && (
-                      <p className="text-[10px] font-mono text-neutral-400 dark:text-[#626670] pt-0.5">
+                      <p className="text-[10px] font-mono text-neutral-500 pt-0.5">
                         Contract begins on {today?.periodKey}. No penalty will be evaluated today.
                       </p>
                     )}
@@ -463,7 +470,7 @@ export const DashboardPage: React.FC = () => {
                       {Boolean(c.rule?.stakeAmount && c.rule.stakeAmount > 0) && (
                         <>
                           <div className="w-px h-3.5 bg-neutral-200 dark:bg-white/[0.08]" />
-                          <span className="text-[11px] font-mono text-neutral-500 dark:text-[#8a8f98]">
+                          <span className="text-[11px] font-mono text-neutral-400">
                             {c.rule.stakeCurrency === 'INR' ? '₹' : c.rule.stakeCurrency}{c.rule.stakeAmount}/miss
                           </span>
                         </>
@@ -475,9 +482,9 @@ export const DashboardPage: React.FC = () => {
                   <div className="flex items-center justify-between pt-3 border-t border-neutral-200 dark:border-white/[0.06]">
                     <Link
                       to={`/commitments/${c.id}`}
-                      className="text-xs font-mono text-neutral-500 dark:text-[#8a8f98] hover:text-[#111827] dark:hover:text-[#f2f3f5] flex items-center gap-1 transition-colors"
+                      className="text-xs font-mono text-neutral-400 hover:text-white flex items-center gap-1 transition-colors"
                     >
-                      <span>Inspect contract</span>
+                      <span>Inspect covenant</span>
                       <ChevronRight size={13} />
                     </Link>
 
@@ -485,10 +492,10 @@ export const DashboardPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setSelectedProofDay({ day: today, commitment: c })}
-                        className="mac-btn-primary !text-xs !py-1 !px-2.5 font-medium cursor-pointer"
+                        className="mac-btn-primary !text-xs !py-1 !px-3 font-medium cursor-pointer"
                       >
                         <CheckCircle2 size={12} />
-                        <span>Log proof</span>
+                        <span>Log progress</span>
                       </button>
                     )}
                   </div>
@@ -550,6 +557,33 @@ export const DashboardPage: React.FC = () => {
             ))}
           </div>
         </div>
+      )}
+
+      {/* Floating Prompt & Action Capsule (Antigravity Style) */}
+      {data?.activeCommitments && data.activeCommitments.length > 0 && (
+        <AntigravityActionDock
+          contracts={data.activeCommitments.map((c) => ({
+            id: c.id,
+            title: c.title,
+            currentLives: c.currentLives,
+            maxLives: c.rule?.maxLives || 3,
+            currentStreak: c.currentStreak,
+            todayProgress: c.todayProgress,
+            rule: c.rule,
+          }))}
+          onLogProof={(contract) => {
+            const today = contract.todayProgress;
+            if (today) {
+              setSelectedProofDay({ day: today, commitment: contract as any });
+            } else {
+              window.location.href = `/commitments/${contract.id}`;
+            }
+          }}
+          onOpenCommandPalette={() => {
+            const ev = new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true });
+            window.dispatchEvent(ev);
+          }}
+        />
       )}
 
       {/* Proof Modal */}

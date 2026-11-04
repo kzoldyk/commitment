@@ -68,7 +68,7 @@ const MacAppLayout: React.FC = () => {
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
 
   return (
-    <div className="w-full h-screen min-h-screen bg-[#f7f8f9] dark:bg-[#0d0e12] text-[#111827] dark:text-[#f2f3f5] flex flex-col font-sans select-none overflow-hidden relative">
+    <div className="w-full h-screen min-h-screen bg-[#f7f8f9] dark:bg-[#07080b] text-[#111827] dark:text-[#f9fafb] flex flex-col font-sans select-none overflow-hidden relative antigravity-ambient-glow">
       {/* Main Full-Bleed Application Shell */}
       <MacOSWindowFrame
         onOpenCommandPalette={() => setCommandPaletteOpen(true)}

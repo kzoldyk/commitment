@@ -56,9 +56,9 @@ export const LandingPage: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-[calc(100vh-3rem)] flex flex-col justify-between overflow-hidden bg-[#f7f8f9] dark:bg-[#0d0e12] text-[#111827] dark:text-[#f2f3f5] transition-colors duration-200">
-      {/* Background Architectural Grid & Subtle Radial Highlights */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-neutral-200/40 dark:bg-white/[0.02] blur-[140px] -z-10 pointer-events-none rounded-full" />
+    <div className="relative min-h-[calc(100vh-3rem)] flex flex-col justify-between overflow-hidden bg-[#f7f8f9] dark:bg-[#07080b] text-[#111827] dark:text-[#f9fafb] transition-colors duration-200">
+      {/* Background Architectural Grid & Subtle Radial Atmospheric Glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1100px] h-[550px] bg-gradient-to-b from-blue-500/10 via-indigo-500/5 to-transparent blur-[140px] -z-10 pointer-events-none rounded-full" />
       <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.03)_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] -z-10 opacity-30" />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-12 pb-24">
@@ -67,11 +67,11 @@ export const LandingPage: React.FC = () => {
           {/* Left Column: Editorial Value Proposition */}
           <div className="lg:col-span-6 space-y-6 text-left">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-neutral-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.04] text-xs text-neutral-600 dark:text-[#8a8f98] shadow-xs backdrop-blur-md">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
               <span>Accountability covenant engine</span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-[#111827] dark:text-[#f2f3f5] leading-[1.1]">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-[#111827] dark:text-[#f9fafb] leading-[1.1]">
               <span className="sr-only">commitment</span>Commitment: Promises broken in private. Sealed and kept in public.
             </h1>
 
@@ -136,125 +136,155 @@ export const LandingPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Column: Live Interactive Contract Simulator (T5.1) */}
+          {/* Right Column: Live Interactive Contract Simulator (Antigravity Glassmorphism) */}
           <div className="lg:col-span-6 w-full">
-            <MacWindow
-              title="Contract Simulator"
-              showTrafficLights={true}
-              icon={<Sparkles size={14} className="text-amber-500" />}
-              rightAction={
-                <span className="text-[10px] font-mono text-neutral-500">Interactive Sandbox</span>
-              }
-            >
-              <div className="space-y-5">
-                {/* Simulator Controls */}
-                <div className="space-y-3 p-3.5 rounded-xl bg-neutral-100/70 dark:bg-neutral-950/60 border border-neutral-200/80 dark:border-white/5">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-mono font-semibold text-neutral-700 dark:text-neutral-300">
-                      1. Select commitment discipline
-                    </span>
-                    <span className="text-[10px] font-mono text-neutral-400">Tap to test</span>
+            <div className="antigravity-capsule rounded-3xl p-6 sm:p-7 relative overflow-hidden select-none">
+              {/* Internal ambient illumination spot */}
+              <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-80 h-40 bg-gradient-to-b from-blue-500/15 via-indigo-500/5 to-transparent blur-3xl pointer-events-none rounded-full" />
+
+              {/* Capsule Header */}
+              <div className="flex items-center justify-between pb-4 border-b border-neutral-200 dark:border-white/[0.06] relative z-10">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-6 h-6 rounded-lg bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.25)]">
+                    <Sparkles size={13} />
                   </div>
-
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
-                    {(['leetcode', 'running', 'reading', 'writing'] as const).map((key) => (
-                      <button
-                        key={key}
-                        type="button"
-                        onClick={() => {
-                          setSimPreset(key);
-                          handleSimReset();
-                        }}
-                        className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-all cursor-pointer text-center ${
-                          simPreset === key
-                            ? 'bg-[#111827] text-white dark:bg-white/[0.1] dark:text-[#f2f3f5] border border-neutral-900 dark:border-white/20 shadow-xs'
-                            : 'bg-white dark:bg-white/[0.02] text-neutral-600 dark:text-[#8a8f98] border border-neutral-200 dark:border-white/[0.06] hover:text-[#111827] dark:hover:text-[#f2f3f5] hover:border-neutral-300 dark:hover:border-white/[0.12]'
-                        }`}
-                      >
-                        {key === 'leetcode' ? 'LeetCode' : key.charAt(0).toUpperCase() + key.slice(1)}
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Simulator Parameters */}
-                  <div className="grid grid-cols-2 gap-3 pt-2 border-t border-neutral-200 dark:border-white/[0.06]">
-                    <div>
-                      <label className="block text-[11px] font-mono text-neutral-600 dark:text-[#8a8f98] mb-1">
-                        Initial lives: <strong className="text-[#111827] dark:text-[#f2f3f5]">{simInitialLives}</strong>
-                      </label>
-                      <div className="flex items-center gap-1">
-                        {[1, 2, 3, 5].map((num) => (
-                          <button
-                            key={num}
-                            type="button"
-                            onClick={() => {
-                              setSimInitialLives(num);
-                              setSimCurrentLives(num);
-                              setSimDebt(0);
-                            }}
-                            className={`px-2.5 py-0.5 rounded text-xs font-mono font-medium cursor-pointer ${
-                              simInitialLives === num
-                                ? 'bg-[#111827] text-white dark:bg-white dark:text-[#0d0e12]'
-                                : 'bg-white dark:bg-white/[0.04] text-neutral-600 dark:text-[#8a8f98] border border-neutral-200 dark:border-white/[0.06] hover:text-[#111827] dark:hover:text-[#f2f3f5]'
-                            }`}
-                          >
-                            {num}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-[11px] font-mono text-neutral-600 dark:text-[#8a8f98] mb-1">
-                        Penalty stake per miss:
-                      </label>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const next = simStakeAmount === 250 ? 500 : simStakeAmount === 500 ? 1000 : 250;
-                          setSimStakeAmount(next);
-                          setSimDebt(0);
-                        }}
-                        className="px-2.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-xs font-mono font-medium text-amber-600 dark:text-amber-300 cursor-pointer hover:bg-amber-500/20 transition-colors"
-                      >
-                        ₹{simStakeAmount} / miss
-                      </button>
-                    </div>
+                  <div>
+                    <h3 className="text-sm font-semibold tracking-tight text-[#111827] dark:text-[#f9fafb]">
+                      Contract Simulator
+                    </h3>
+                    <p className="text-[10px] font-mono text-neutral-400 dark:text-[#626670]">
+                      Interactive Enforcement Sandbox
+                    </p>
                   </div>
                 </div>
 
-                {/* Live Real-Time Contract Preview */}
-                <div className="p-4 rounded-xl border border-neutral-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02] space-y-3.5 shadow-xs">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-neutral-100 dark:bg-white/[0.04] border border-neutral-200 dark:border-white/[0.06] text-[10px] font-mono text-neutral-500 dark:text-[#8a8f98]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.5)]" />
+                  <span>Real-time engine</span>
+                </div>
+              </div>
+
+              <div className="space-y-6 pt-5 relative z-10">
+                {/* 1. Discipline Segmented Control (Fluid Segment, No Heavy Double Boxing) */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-xs font-mono">
+                    <span className="text-neutral-400">
+                      1. Select Commitment Discipline
+                    </span>
+                    <span className="text-[10px] text-neutral-500 font-mono">
+                      Tap discipline to test
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-1 p-1 rounded-xl bg-black/40 border border-white/[0.06]">
+                    {(['leetcode', 'running', 'reading', 'writing'] as const).map((key) => {
+                      const isSelected = simPreset === key;
+                      return (
+                        <button
+                          key={key}
+                          type="button"
+                          onClick={() => {
+                            setSimPreset(key);
+                            handleSimReset();
+                          }}
+                          className={`py-2 px-2.5 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer text-center ${
+                            isSelected
+                              ? 'bg-white/[0.12] text-white border border-white/[0.14] shadow-sm font-semibold'
+                              : 'text-neutral-400 hover:text-white hover:bg-white/[0.03] border border-transparent'
+                          }`}
+                        >
+                          {key === 'leetcode' ? 'LeetCode' : key.charAt(0).toUpperCase() + key.slice(1)}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 2. Parameters (Lives & Penalty Stake) */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-3 border-y border-white/[0.05]">
+                  <div>
+                    <span className="block text-[11px] font-mono text-neutral-400 mb-1.5">
+                      Initial lives: <strong className="text-white font-semibold">{simInitialLives}</strong>
+                    </span>
+                    <div className="inline-flex items-center gap-1 p-0.5 rounded-lg bg-black/40 border border-white/[0.06]">
+                      {[1, 2, 3, 5].map((num) => (
+                        <button
+                          key={num}
+                          type="button"
+                          onClick={() => {
+                            setSimInitialLives(num);
+                            setSimCurrentLives(num);
+                            setSimDebt(0);
+                          }}
+                          className={`w-7 h-6 rounded-md text-xs font-mono font-medium transition-colors cursor-pointer flex items-center justify-center ${
+                            simInitialLives === num
+                              ? 'bg-white/[0.15] text-white shadow-xs border border-white/[0.15]'
+                              : 'text-neutral-500 hover:text-white'
+                          }`}
+                        >
+                          {num}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <span className="block text-[11px] font-mono text-neutral-400 mb-1.5">
+                      Penalty stake per miss:
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const next = simStakeAmount === 250 ? 500 : simStakeAmount === 500 ? 1000 : 250;
+                        setSimStakeAmount(next);
+                        setSimDebt(0);
+                      }}
+                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-500/10 border border-amber-500/25 text-xs font-mono font-medium text-amber-300 hover:bg-amber-500/20 transition-all cursor-pointer shadow-[0_0_8px_rgba(245,158,11,0.15)]"
+                    >
+                      <Coins size={12} />
+                      <span>₹{simStakeAmount} / miss ▾</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* 3. Live Real-Time Contract Preview (Integrated Fluid Glass) */}
+                <div className="space-y-4">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400" />
-                        Live contract terms
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 flex items-center gap-1.5 font-semibold">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] animate-pulse" />
+                        Live Covenant Terms
                       </span>
-                      <h3 className="text-sm font-semibold text-[#111827] dark:text-[#f2f3f5] mt-1">
+                      <h4 className="text-base font-semibold text-[#111827] dark:text-[#f9fafb] mt-0.5 tracking-tight">
                         {presets[simPreset].title}
-                      </h3>
+                      </h4>
                     </div>
                     <StreakBadge streak={14} size="sm" />
                   </div>
 
-                  {/* Vitals in simulator */}
-                  <div className="grid grid-cols-2 gap-3 p-3 rounded-lg bg-neutral-50 dark:bg-white/[0.02] border border-neutral-200 dark:border-white/[0.06]">
+                  {/* Vitals Telemetry Row */}
+                  <div className="grid grid-cols-2 gap-3 p-3.5 rounded-xl bg-black/40 border border-white/[0.05]">
                     <div>
-                      <span className="text-[11px] text-neutral-500 dark:text-[#8a8f98] font-mono block mb-1">Contract lives</span>
+                      <span className="text-[10px] text-neutral-400 font-mono uppercase tracking-wider block mb-1">
+                        Contract Vitality
+                      </span>
                       <LivesIndicator currentLives={simCurrentLives} maxLives={simInitialLives} size="sm" />
                       {simCurrentLives === 0 && (
-                        <span className="text-[11px] text-rose-500 dark:text-rose-400 font-semibold block mt-1">
-                          Contract terminated
+                        <span className="text-[10px] font-mono text-rose-400 font-semibold block mt-1">
+                          ✖ Covenant Terminated
                         </span>
                       )}
                     </div>
 
                     <div>
-                      <span className="text-[11px] text-neutral-500 dark:text-[#8a8f98] font-mono block mb-1">Debt owed to witness</span>
+                      <span className="text-[10px] text-neutral-400 font-mono uppercase tracking-wider block mb-0.5">
+                        Witness Debt Counter
+                      </span>
                       <span
-                        className={`text-base font-mono font-bold ${
-                          simDebt > 0 ? 'text-rose-500 dark:text-rose-400' : 'text-[#111827] dark:text-[#f2f3f5]'
+                        className={`text-xl font-mono font-bold tabular-nums tracking-tight ${
+                          simDebt > 0
+                            ? 'text-rose-400 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]'
+                            : 'text-[#111827] dark:text-[#f9fafb]'
                         }`}
                       >
                         ₹{simDebt.toLocaleString()}
@@ -262,48 +292,46 @@ export const LandingPage: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Dynamic Rule Logic Statements */}
-                  <div className="text-xs font-mono space-y-1.5 text-neutral-600 dark:text-[#8a8f98] pt-1">
-                    <p className="flex items-center gap-1.5">
-                      <span className="text-neutral-400 dark:text-white/40">→</span>
-                      <span>Target: {presets[simPreset].target} before 00:00 midnight local cutoff.</span>
+                  {/* Rule Logic Telemetry Lines */}
+                  <div className="text-[11px] font-mono space-y-1.5 text-neutral-400 pt-1">
+                    <p className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-blue-400/60 shrink-0" />
+                      <span>Target: <strong className="text-neutral-200 font-medium">{presets[simPreset].target}</strong> before 00:00 midnight cutoff.</span>
                     </p>
-                    <p className="flex items-center gap-1.5">
-                      <span className="text-neutral-400 dark:text-white/40">→</span>
-                      <span>
-                        Miss cutoff: deduct 1 life and add +₹{simStakeAmount} to partner debt counter.
-                      </span>
+                    <p className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-rose-400/60 shrink-0" />
+                      <span>Miss cutoff: deduct 1 life & accumulate +₹{simStakeAmount} partner debt.</span>
                     </p>
-                    <p className="flex items-center gap-1.5">
-                      <span className="text-emerald-600 dark:text-emerald-400">→</span>
-                      <span>Maintain 5 consecutive days to restore +1 life (capped at {simInitialLives}).</span>
+                    <p className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/60 shrink-0" />
+                      <span>Streak 5 consecutive days to restore +1 life (cap: {simInitialLives}).</span>
                     </p>
                   </div>
                 </div>
 
-                {/* Simulator Actions */}
+                {/* 4. Action Buttons (Laser Cut Plasma Pill & Glass Capsule) */}
                 <div className="flex items-center justify-between gap-3 pt-2">
                   <button
                     type="button"
                     onClick={handleSimMiss}
                     disabled={simCurrentLives === 0}
-                    className="mac-btn-primary !px-3.5 !py-1.5 !rounded-md !text-xs font-medium flex items-center gap-1.5 cursor-pointer disabled:opacity-40"
+                    className="px-4 py-2.5 rounded-xl text-xs font-medium flex items-center gap-2 transition-all cursor-pointer bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/35 shadow-[0_0_14px_rgba(244,63,94,0.25)] disabled:opacity-40 disabled:cursor-not-allowed"
                   >
-                    <AlertTriangle size={13} />
-                    <span>Test a missed cutoff</span>
+                    <AlertTriangle size={13} className="text-rose-400" />
+                    <span>Test Missed Cutoff</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={handleSimReset}
-                    className="mac-btn-secondary !px-3 !py-1.5 !rounded-md !text-xs font-mono flex items-center gap-1.5 cursor-pointer"
+                    className="px-3.5 py-2 rounded-xl text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer bg-white/[0.04] hover:bg-white/[0.08] text-neutral-400 hover:text-white border border-white/[0.06]"
                   >
                     <RotateCcw size={12} />
-                    <span>Reset simulator</span>
+                    <span>Reset Simulator</span>
                   </button>
                 </div>
               </div>
-            </MacWindow>
+            </div>
           </div>
         </div>
 
