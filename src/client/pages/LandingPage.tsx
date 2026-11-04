@@ -309,13 +309,13 @@ export const LandingPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* 4. Action Buttons (Laser Cut Plasma Pill & Glass Capsule) */}
+                {/* 4. Action Buttons (3D Tactile Plasma Trigger & Glass Capsule) */}
                 <div className="flex items-center justify-between gap-3 pt-2">
                   <button
                     type="button"
                     onClick={handleSimMiss}
                     disabled={simCurrentLives === 0}
-                    className="px-4 py-2.5 rounded-xl text-xs font-medium flex items-center gap-2 transition-all cursor-pointer bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/35 shadow-[0_0_14px_rgba(244,63,94,0.25)] disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="element-3d px-4 py-2.5 rounded-xl text-xs font-medium flex items-center gap-2 transition-all cursor-pointer bg-gradient-to-b from-rose-500/25 to-rose-600/15 hover:from-rose-500/35 hover:to-rose-600/25 text-rose-200 border border-rose-400/40 shadow-[0_4px_12px_rgba(244,63,94,0.3),inset_0_1px_0_0_rgba(255,255,255,0.3),inset_0_-1px_0_0_rgba(0,0,0,0.5)] disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     <AlertTriangle size={13} className="text-rose-400" />
                     <span>Test Missed Cutoff</span>
@@ -324,7 +324,7 @@ export const LandingPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={handleSimReset}
-                    className="px-3.5 py-2 rounded-xl text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer bg-white/[0.04] hover:bg-white/[0.08] text-neutral-400 hover:text-white border border-white/[0.06]"
+                    className="element-3d px-3.5 py-2 rounded-xl text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer bg-gradient-to-b from-white/[0.08] to-white/[0.02] hover:from-white/[0.12] hover:to-white/[0.04] text-neutral-300 hover:text-white border border-white/[0.1] shadow-[0_2px_6px_rgba(0,0,0,0.4),inset_0_1px_0_0_rgba(255,255,255,0.2),inset_0_-1px_0_0_rgba(0,0,0,0.4)]"
                   >
                     <RotateCcw size={12} />
                     <span>Reset Simulator</span>
