@@ -562,6 +562,10 @@ export class CommitmentService {
     db: DatabaseInstance,
     params: { commitmentId: string; dayId: string; userId: string; value: number; metadataText?: string }
   ) {
+    if (typeof params.value !== 'number' || !Number.isFinite(params.value) || params.value <= 0) {
+      throw new Error('Proof value must be a positive number');
+    }
+
     const commitment = await this.getRawById(db, params.commitmentId);
     if (!commitment) throw new Error('Commitment not found');
 

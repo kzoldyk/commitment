@@ -133,6 +133,21 @@ export const api = {
   getMe: () =>
     request<{ user: User | null }>('/api/auth/me'),
 
+  forgotPassword: (email: string) =>
+    request<{ success: boolean; message: string; devResetUrl?: string }>('/api/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    }),
+
+  verifyResetToken: (token: string) =>
+    request<{ valid: boolean; email?: string }>(`/api/auth/verify-reset-token?token=${encodeURIComponent(token)}`),
+
+  resetPassword: (body: { token: string; password: string }) =>
+    request<{ success: boolean; message: string }>('/api/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+
   // Dashboard
   getDashboard: () =>
     request<DashboardData>('/api/dashboard'),

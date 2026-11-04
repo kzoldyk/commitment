@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { getCookie, setCookie, deleteCookie } from 'hono/cookie';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
+import { secureHeaders } from 'hono/secure-headers';
 import { getDb, DatabaseInstance } from './db';
 import { AuthService } from './modules/auth/auth.service';
 import { CommitmentService } from './modules/commitments/commitment.service';
@@ -11,6 +12,7 @@ import { DashboardService } from './modules/dashboard/dashboard.service';
 import { EmailService } from './modules/notifications/email.service';
 import { NotificationService } from './modules/notifications/notification.service';
 import { resolveLeetCodeProblem } from './modules/leetcode/leetcode.resolver';
+import { timingSafeEqual } from './shared/crypto';
 
 export type Bindings = {
   DB?: D1Database;
@@ -45,7 +47,8 @@ const evaluationService = new EvaluationService();
 const userService = new UserService();
 const dashboardService = new DashboardService();
 
-// Middleware: DB initialization & Logger
+// Middleware: Security Headers & Logger & DB
+app.use('*', secureHeaders());
 app.use('*', logger());
 app.use('*', async (c, next) => {
   const db = getDb(c.env?.DB);
@@ -62,6 +65,41 @@ app.use('*', async (c, next) => {
   await next();
 });
 
+// In-Memory Rate Limiter (Sliding Window per IP)
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const createRateLimiter = (maxRequests: number, windowSeconds: number) => {
+  return async (c: any, next: any) => {
+    // In test environment, bypass rate limiting
+    if (process.env.NODE_ENV === 'test') {
+      return next();
+    }
+    const ip =
+      c.req.header('cf-connecting-ip') ||
+      c.req.header('x-forwarded-for')?.split(',')[0].trim() ||
+      'localhost';
+    const key = `${ip}:${c.req.path}`;
+    const now = Date.now();
+    const windowMs = windowSeconds * 1000;
+
+    const record = rateLimitMap.get(key);
+    if (!record || record.resetAt <= now) {
+      rateLimitMap.set(key, { count: 1, resetAt: now + windowMs });
+    } else {
+      record.count++;
+      if (record.count > maxRequests) {
+        return c.json(
+          { error: { code: 'RATE_LIMIT_EXCEEDED', message: 'Too many requests. Please try again later.' } },
+          429
+        );
+      }
+    }
+    await next();
+  };
+};
+
+const authRateLimit = createRateLimiter(20, 60); // 20 requests per minute
+const resetRateLimit = createRateLimiter(5, 60); // 5 password reset requests per minute
+
 // Require Auth Guard Helper
 const requireAuth = async (c: any, next: any) => {
   const user = c.get('user');
@@ -72,7 +110,7 @@ const requireAuth = async (c: any, next: any) => {
 };
 
 // --- AUTH ROUTES ---
-app.post('/api/auth/register', async (c) => {
+app.post('/api/auth/register', authRateLimit, async (c) => {
   try {
     const body = await c.req.json();
     const db = c.get('db');
@@ -92,7 +130,7 @@ app.post('/api/auth/register', async (c) => {
   }
 });
 
-app.post('/api/auth/login', async (c) => {
+app.post('/api/auth/login', authRateLimit, async (c) => {
   try {
     const body = await c.req.json();
     const db = c.get('db');
@@ -128,6 +166,43 @@ app.get('/api/auth/me', async (c) => {
     return c.json({ user: null });
   }
   return c.json({ user });
+});
+
+app.post('/api/auth/forgot-password', resetRateLimit, async (c) => {
+  try {
+    const body = await c.req.json();
+    const db = c.get('db');
+    const origin = c.req.header('origin') || c.req.header('referer');
+    const result = await authService.requestPasswordReset(db, body.email || '', origin, c.env);
+    return c.json(result);
+  } catch (err: any) {
+    return c.json({ error: { code: 'FORGOT_PASSWORD_FAILED', message: err.message } }, 400);
+  }
+});
+
+app.get('/api/auth/verify-reset-token', async (c) => {
+  try {
+    const token = c.req.query('token') || '';
+    const db = c.get('db');
+    const result = await authService.verifyResetToken(db, token);
+    if (!result.valid) {
+      return c.json({ error: { code: 'INVALID_TOKEN', message: result.message } }, 400);
+    }
+    return c.json(result);
+  } catch (err: any) {
+    return c.json({ error: { code: 'VERIFICATION_FAILED', message: err.message } }, 400);
+  }
+});
+
+app.post('/api/auth/reset-password', resetRateLimit, async (c) => {
+  try {
+    const body = await c.req.json();
+    const db = c.get('db');
+    const result = await authService.resetPassword(db, body.token, body.password);
+    return c.json(result);
+  } catch (err: any) {
+    return c.json({ error: { code: 'RESET_PASSWORD_FAILED', message: err.message } }, 400);
+  }
 });
 
 // --- DASHBOARD ROUTE ---
@@ -293,12 +368,30 @@ app.patch('/api/users/profile', requireAuth, async (c) => {
   return c.json({ user: updated });
 });
 
+// Helper to safely verify scheduled cron execution
+const verifyCronAuth = (c: any): boolean => {
+  const authHeader = c.req.header('Authorization') || '';
+  const cronSecret = c.env?.CRON_SECRET || (typeof process !== 'undefined' ? process.env?.CRON_SECRET : undefined);
+  const isProd = c.env?.ENVIRONMENT === 'production';
+
+  // In production, CRON_SECRET is strictly mandatory
+  if (isProd) {
+    if (!cronSecret) return false;
+    return timingSafeEqual(authHeader, `Bearer ${cronSecret}`);
+  }
+
+  // In non-production, check secret if configured
+  if (cronSecret) {
+    return timingSafeEqual(authHeader, `Bearer ${cronSecret}`);
+  }
+
+  return true;
+};
+
 // --- SCHEDULED EVALUATION TRIGGER ---
 app.all('/api/cron/evaluate', async (c) => {
-  const authHeader = c.req.header('Authorization');
-  const cronSecret = c.env?.CRON_SECRET || (typeof process !== 'undefined' ? process.env?.CRON_SECRET : undefined);
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-    return c.json({ error: 'Unauthorized cron runner' }, 401);
+  if (!verifyCronAuth(c)) {
+    return c.json({ error: { code: 'UNAUTHORIZED', message: 'Unauthorized cron runner' } }, 401);
   }
 
   const db = c.get('db');
@@ -320,10 +413,8 @@ app.all('/api/cron/evaluate', async (c) => {
 
 // --- SCHEDULED REMINDERS TRIGGER (11:00 PM) ---
 app.all('/api/cron/reminders', async (c) => {
-  const authHeader = c.req.header('Authorization');
-  const cronSecret = c.env?.CRON_SECRET || (typeof process !== 'undefined' ? process.env?.CRON_SECRET : undefined);
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-    return c.json({ error: 'Unauthorized cron runner' }, 401);
+  if (!verifyCronAuth(c)) {
+    return c.json({ error: { code: 'UNAUTHORIZED', message: 'Unauthorized cron runner' } }, 401);
   }
 
   const db = c.get('db');
@@ -335,32 +426,23 @@ app.all('/api/cron/reminders', async (c) => {
   });
 });
 
-// --- DIRECT TEST EMAIL ENDPOINT ---
-app.all('/api/notifications/test-email', async (c) => {
-  const queryTo = c.req.query('to');
-  let bodyTo: string | undefined;
-  if (c.req.method === 'POST') {
-    try {
-      const body = await c.req.json();
-      bodyTo = body.to;
-    } catch {
-      // ignore
-    }
-  }
-
-  const targetEmail = queryTo || bodyTo || c.env?.GMAIL_USER || (typeof process !== 'undefined' ? process.env?.GMAIL_USER : undefined) || 'hp5741609@gmail.com';
+// --- DIRECT TEST EMAIL ENDPOINT (Authenticated & scoped to own user) ---
+app.post('/api/notifications/test-email', requireAuth, async (c) => {
+  const user = c.get('user')!;
+  const targetEmail = user.email;
   const emailService = new EmailService(c.env);
 
   const result = await emailService.sendEmail({
     to: targetEmail,
     subject: '🧪 Commitment Test Email — System Verification',
-    text: `Hello!\n\nThis is a test notification from your Commitment accountability system.\n\nTime sent: ${new Date().toISOString()}\nProvider: ${emailService.getProviderName()}\n\nYour email service is configured and operational!`,
+    text: `Hello ${user.displayName || user.username}!\n\nThis is a test notification from your Commitment accountability system.\n\nTime sent: ${new Date().toISOString()}\nProvider: ${emailService.getProviderName()}\n\nYour email service is configured and operational!`,
     html: `
       <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 540px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px;">
         <h2 style="color: #0f172a; margin-top: 0;">🧪 System Test Email</h2>
         <p style="color: #334155; line-height: 1.6;">This is a test notification from your <strong>Commitment</strong> accountability system.</p>
         <div style="background-color: #f8fafc; border-left: 4px solid #10b981; padding: 12px 16px; margin: 20px 0; border-radius: 4px;">
           <p style="margin: 0; color: #0f172a; font-weight: 600;">Status: Operational ✅</p>
+          <p style="margin: 4px 0 0 0; color: #64748b; font-size: 13px;">Recipient: ${targetEmail}</p>
           <p style="margin: 4px 0 0 0; color: #64748b; font-size: 13px;">Provider: ${emailService.getProviderName()}</p>
           <p style="margin: 4px 0 0 0; color: #64748b; font-size: 13px;">Timestamp: ${new Date().toLocaleString()}</p>
         </div>

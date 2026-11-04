@@ -11,7 +11,6 @@ export class UserService {
       .select({
         id: schema.users.id,
         username: schema.users.username,
-        email: schema.users.email,
         displayName: schema.users.displayName,
       })
       .from(schema.users)

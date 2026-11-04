@@ -180,3 +180,16 @@ export const auditLogs = sqliteTable('audit_logs', {
 }, (table) => [
   index('idx_audit_entity').on(table.entityType, table.entityId),
 ]);
+
+// --- Password Reset Tokens ---
+export const passwordResetTokens = sqliteTable('password_reset_tokens', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  token: text('token').notNull().unique(),
+  expiresAt: integer('expires_at').notNull(),
+  usedAt: integer('used_at'),
+  createdAt: integer('created_at').notNull().default(sql`(unixepoch())`),
+}, (table) => [
+  index('idx_password_reset_token').on(table.token),
+  index('idx_password_reset_user_id').on(table.userId),
+]);

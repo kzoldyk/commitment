@@ -147,10 +147,21 @@ export function runMigrations(sqliteInstance?: any) {
       created_at INTEGER NOT NULL
     );
 
+    CREATE TABLE IF NOT EXISTS password_reset_tokens (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      token TEXT NOT NULL UNIQUE,
+      expires_at INTEGER NOT NULL,
+      used_at INTEGER,
+      created_at INTEGER NOT NULL
+    );
+
     CREATE INDEX IF NOT EXISTS idx_commitments_creator ON commitments(creator_id);
     CREATE INDEX IF NOT EXISTS idx_commitments_partner ON commitments(partner_id);
     CREATE INDEX IF NOT EXISTS idx_commitment_days_eval ON commitment_days(evaluation_at, status);
     CREATE INDEX IF NOT EXISTS idx_notifications_status ON notification_events(status, scheduled_at);
+    CREATE INDEX IF NOT EXISTS idx_password_reset_token ON password_reset_tokens(token);
+    CREATE INDEX IF NOT EXISTS idx_password_reset_user_id ON password_reset_tokens(user_id);
   `);
 
   // Safe migrations for new columns on existing tables

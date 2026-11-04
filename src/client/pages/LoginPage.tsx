@@ -76,9 +76,17 @@ export const LoginPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-mono text-neutral-600 dark:text-[#8a8f98] mb-1.5">
-              Password
-            </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-mono text-neutral-600 dark:text-[#8a8f98]">
+                Password
+              </label>
+              <Link
+                to="/forgot-password"
+                className="text-[11px] font-mono text-neutral-500 hover:text-neutral-900 dark:text-[#8a8f98] dark:hover:text-[#f2f3f5] transition-colors hover:underline"
+              >
+                Forgot password?
+              </Link>
+            </div>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-neutral-400 dark:text-[#626670]">
                 <Lock size={13} />

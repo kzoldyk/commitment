@@ -61,9 +61,27 @@ export async function verifyPassword(password: string, storedHash: string): Prom
   );
 
   const hashHex = Array.from(new Uint8Array(keyBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
-  return hashHex === targetHashHex;
+  return timingSafeEqual(hashHex, targetHashHex);
+}
+
+export function timingSafeEqual(a: string, b: string): boolean {
+  if (typeof a !== 'string' || typeof b !== 'string') {
+    return false;
+  }
+  const aLen = a.length;
+  const bLen = b.length;
+  let diff = aLen ^ bLen;
+  for (let i = 0; i < aLen; i++) {
+    diff |= a.charCodeAt(i) ^ b.charCodeAt(i % (bLen || 1));
+  }
+  return diff === 0;
 }
 
 export function generateId(): string {
   return crypto.randomUUID();
+}
+
+export function generateSecureToken(): string {
+  const buffer = crypto.getRandomValues(new Uint8Array(32));
+  return Array.from(buffer).map(b => b.toString(16).padStart(2, '0')).join('');
 }
