@@ -145,8 +145,8 @@ export const LandingPage: React.FC = () => {
               {/* Capsule Header */}
               <div className="flex items-center justify-between pb-4 border-b border-neutral-200 dark:border-white/[0.06] relative z-10">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-6 h-6 rounded-lg bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.25)]">
-                    <Sparkles size={13} />
+                  <div className="w-6 h-6 rounded-lg icon-badge-3d text-amber-400">
+                    <Sparkles size={13} className="icon-3d" />
                   </div>
                   <div>
                     <h3 className="text-sm font-semibold tracking-tight text-[#111827] dark:text-[#f9fafb]">

@@ -282,7 +282,7 @@ export const DashboardPage: React.FC = () => {
             <span className="text-2xl sm:text-3xl font-semibold font-mono text-amber-500 dark:text-amber-300 tabular-nums tracking-tight">
               {data?.stats.highestStreak || 0}
             </span>
-            <Flame size={18} className="text-amber-500 fill-amber-500/20 animate-pulse" />
+            <Flame size={18} className="text-amber-400 fill-amber-400/20 icon-3d" />
           </div>
         </div>
 
@@ -294,7 +294,7 @@ export const DashboardPage: React.FC = () => {
             <span className="text-2xl sm:text-3xl font-semibold font-mono text-emerald-600 dark:text-emerald-400 tabular-nums tracking-tight">
               {data?.stats.totalSuccessfulDays || 0}
             </span>
-            <CheckCircle2 size={18} className="text-emerald-600 dark:text-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.3)] rounded-full" />
+            <CheckCircle2 size={18} className="text-emerald-400 icon-3d" />
           </div>
         </div>
 

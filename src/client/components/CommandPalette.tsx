@@ -249,13 +249,13 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
                 >
                   <div className="flex items-center gap-3.5 min-w-0">
                     <div
-                      className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all ${
+                      className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all icon-badge-3d ${
                         isSelected
-                          ? 'bg-neutral-200 dark:bg-white/15 text-[#111827] dark:text-[#f9fafb] border border-neutral-300 dark:border-white/[0.15] shadow-[0_0_12px_rgba(255,255,255,0.1)]'
-                          : 'bg-neutral-100 dark:bg-white/[0.04] text-neutral-500 dark:text-[#626670] border border-neutral-200 dark:border-white/[0.05]'
+                          ? 'border-white/[0.25] shadow-[0_0_12px_rgba(255,255,255,0.15)] text-white'
+                          : 'text-neutral-400'
                       }`}
                     >
-                      <Icon size={16} />
+                      <Icon size={16} className="icon-3d" />
                     </div>
                     <div className="truncate">
                       <div className="flex items-center gap-2">
