@@ -24,7 +24,6 @@ import { LivesIndicator } from '../components/LivesIndicator';
 import { StreakBadge } from '../components/StreakBadge';
 import { ProofModal } from '../components/ProofModal';
 import { ConfirmModal } from '../components/ConfirmModal';
-import { AntigravityActionDock } from '../components/AntigravityActionDock';
 
 export const DashboardPage: React.FC = () => {
   const { user } = useAuth();
@@ -213,7 +212,7 @@ export const DashboardPage: React.FC = () => {
   const pendingSent = data?.pendingInvitations.filter((p) => p.isCreator) || [];
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 pb-40 space-y-7 relative">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 pb-12 space-y-7 relative">
       {/* Top Subtle Ambient Glow Halo */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-32 bg-gradient-to-b from-indigo-500/[0.07] via-white/[0.01] to-transparent pointer-events-none blur-3xl -z-10" />
 
@@ -557,33 +556,6 @@ export const DashboardPage: React.FC = () => {
             ))}
           </div>
         </div>
-      )}
-
-      {/* Floating Prompt & Action Capsule (Antigravity Style) */}
-      {data?.activeCommitments && data.activeCommitments.length > 0 && (
-        <AntigravityActionDock
-          contracts={data.activeCommitments.map((c) => ({
-            id: c.id,
-            title: c.title,
-            currentLives: c.currentLives,
-            maxLives: c.rule?.maxLives || 3,
-            currentStreak: c.currentStreak,
-            todayProgress: c.todayProgress,
-            rule: c.rule,
-          }))}
-          onLogProof={(contract) => {
-            const today = contract.todayProgress;
-            if (today) {
-              setSelectedProofDay({ day: today, commitment: contract as any });
-            } else {
-              window.location.href = `/commitments/${contract.id}`;
-            }
-          }}
-          onOpenCommandPalette={() => {
-            const ev = new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true });
-            window.dispatchEvent(ev);
-          }}
-        />
       )}
 
       {/* Proof Modal */}
