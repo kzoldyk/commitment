@@ -121,11 +121,11 @@ export class AuthService {
       throw new Error('Invalid username or password');
     }
 
-    const cleanUsername = data.username.trim().toLowerCase();
+    const identifier = data.username.trim().toLowerCase();
     const [user] = await db
       .select()
       .from(schema.users)
-      .where(eq(schema.users.username, cleanUsername));
+      .where(or(eq(schema.users.username, identifier), eq(schema.users.email, identifier)));
 
     if (!user) {
       throw new Error('Invalid username or password');

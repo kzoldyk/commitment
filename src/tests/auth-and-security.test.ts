@@ -187,6 +187,37 @@ describe('Auth, Security & Authorization Guardrails', () => {
     ).rejects.toThrow('Username is already taken');
   });
 
+  it('should allow authenticating with either username or email address', async () => {
+    const { user } = await authService.register(db, {
+      username: 'multi_login_user',
+      email: 'multi_login@example.com',
+      password: 'password123',
+    });
+
+    // 1. Login with username
+    const loginByUsername = await authService.login(db, {
+      username: 'multi_login_user',
+      password: 'password123',
+    });
+    expect(loginByUsername.user.id).toBe(user.id);
+    expect(loginByUsername.session.id).toBeDefined();
+
+    // 2. Login with email
+    const loginByEmail = await authService.login(db, {
+      username: 'multi_login@example.com',
+      password: 'password123',
+    });
+    expect(loginByEmail.user.id).toBe(user.id);
+    expect(loginByEmail.session.id).toBeDefined();
+
+    // 3. Login with case-insensitive email
+    const loginByUpperEmail = await authService.login(db, {
+      username: 'MULTI_LOGIN@EXAMPLE.COM',
+      password: 'password123',
+    });
+    expect(loginByUpperEmail.user.id).toBe(user.id);
+  });
+
   describe('Password Reset & Recovery Flow', () => {
     it('should generate a secure reset token and send reset instructions', async () => {
       const { user } = await authService.register(db, {
