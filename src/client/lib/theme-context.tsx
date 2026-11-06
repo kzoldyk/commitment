@@ -11,9 +11,15 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>(() => {
-    const saved = localStorage.getItem('commitment_theme') as Theme;
-    if (saved === 'light' || saved === 'dark') return saved;
-    return 'light'; // Default light mode for all users
+    try {
+      const userExplicit = localStorage.getItem('commitment_user_explicit');
+      const saved = localStorage.getItem('commitment_theme') as Theme;
+      if (userExplicit === 'true' && (saved === 'light' || saved === 'dark')) {
+        return saved;
+      }
+    } catch {}
+    // First time whenever user opens the application: ALWAYS light mode
+    return 'light';
   });
 
   useEffect(() => {
@@ -23,11 +29,23 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     } else {
       root.classList.remove('dark');
     }
-    localStorage.setItem('commitment_theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+    setTheme((prev) => {
+      const next: Theme = prev === 'dark' ? 'light' : 'dark';
+      try {
+        localStorage.setItem('commitment_user_explicit', 'true');
+        localStorage.setItem('commitment_theme', next);
+      } catch {}
+      const root = document.documentElement;
+      if (next === 'dark') {
+        root.classList.add('dark');
+      } else {
+        root.classList.remove('dark');
+      }
+      return next;
+    });
   };
 
   return (

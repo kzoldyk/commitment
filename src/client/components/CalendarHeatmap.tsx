@@ -70,7 +70,7 @@ export const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-24 bg-gradient-to-b from-indigo-500/[0.08] via-emerald-500/[0.03] to-transparent pointer-events-none blur-2xl" />
 
       {/* ================= TELEMETRY COCKPIT HEADER ================= */}
-      <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5 border-b border-white/[0.06] pb-5">
+      <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5 border-b border-neutral-200 dark:border-white/[0.06] pb-5">
         {/* Left: Cyclotron Velocity Dial & Covenant Identity */}
         <div className="flex items-center gap-4">
           <div className="relative w-15 h-15 shrink-0 flex items-center justify-center">
@@ -222,22 +222,22 @@ export const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({
               let liquidFillColor = 'bg-white/10';
 
               if (isCompleted) {
-                pillarTheme = 'bg-emerald-500/[0.08] border-emerald-400/40 text-emerald-300';
+                pillarTheme = 'bg-emerald-500/[0.08] border-emerald-400/40 text-emerald-700 dark:text-emerald-300';
                 glowEffect = 'shadow-[0_0_18px_rgba(16,185,129,0.22)]';
-                badgeGlyph = <Check size={13} className="text-emerald-400 stroke-[3]" />;
+                badgeGlyph = <Check size={13} className="text-emerald-500 dark:text-emerald-400 stroke-[3]" />;
                 liquidFillColor = 'bg-gradient-to-t from-emerald-600 to-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.7)]';
               } else if (isMissed) {
-                pillarTheme = 'bg-rose-950/20 border-rose-500/40 text-rose-400';
+                pillarTheme = 'bg-rose-500/[0.08] border-rose-500/40 text-rose-700 dark:text-rose-400';
                 glowEffect = 'shadow-[0_0_12px_rgba(239,68,68,0.2)]';
-                badgeGlyph = <X size={13} className="text-rose-400 stroke-[3]" />;
+                badgeGlyph = <X size={13} className="text-rose-500 dark:text-rose-400 stroke-[3]" />;
                 liquidFillColor = 'bg-gradient-to-t from-rose-700 to-rose-500';
               } else if (isInProgress) {
-                pillarTheme = 'bg-amber-500/[0.12] border-amber-400/50 text-amber-200';
+                pillarTheme = 'bg-amber-500/[0.12] border-amber-400/50 text-amber-800 dark:text-amber-200';
                 glowEffect = 'shadow-[0_0_20px_rgba(245,158,11,0.35)] ring-1 ring-amber-400/40';
-                badgeGlyph = <CircleDot size={13} className="animate-spin text-amber-400 stroke-[2.5]" />;
+                badgeGlyph = <CircleDot size={13} className="animate-spin text-amber-500 dark:text-amber-400 stroke-[2.5]" />;
                 liquidFillColor = 'bg-gradient-to-t from-amber-500 to-amber-300 shadow-[0_0_14px_rgba(245,158,11,0.8)]';
               } else if (isFuture) {
-                pillarTheme = 'bg-white/[0.015] border-white/[0.03] opacity-35 cursor-not-allowed';
+                pillarTheme = 'bg-neutral-100 dark:bg-white/[0.015] border-neutral-200 dark:border-white/[0.03] opacity-50 cursor-not-allowed';
                 badgeGlyph = <Lock size={10} className="text-neutral-500" />;
               }
 
@@ -266,7 +266,7 @@ export const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({
                 >
                   {/* Top Micro-Date Stamp */}
                   <div className="flex flex-col items-center relative z-10">
-                    <span className="text-[9px] font-mono tracking-tight text-neutral-400 group-hover:text-white">
+                    <span className="text-[9px] font-mono tracking-tight text-neutral-500 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-white">
                       {day.periodKey.split('-').slice(1).join('/')}
                     </span>
                     <span className="text-[8px] font-mono text-neutral-500">D{idx + 1}</span>
@@ -365,11 +365,11 @@ export const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({
                   {iconElement}
                 </div>
 
-                <span className="text-[9px] font-mono tabular-nums tracking-tight font-medium text-neutral-300 relative z-10">
+                <span className="text-[9px] font-mono tabular-nums tracking-tight font-medium text-neutral-600 dark:text-neutral-300 relative z-10">
                   {day.completedValue}/{day.targetValue}
                 </span>
 
-                <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/40 overflow-hidden">
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-neutral-200 dark:bg-black/40 overflow-hidden">
                   <div
                     className={`h-full transition-all duration-500 rounded-full ${liquidColor}`}
                     style={{ width: `${fillRatio}%` }}
@@ -391,17 +391,17 @@ export const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({
           }}
         >
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-white/[0.08] pb-2 mb-2.5 font-mono">
-            <span className="font-semibold text-neutral-200 tracking-tight">{hoveredDay.day.periodKey}</span>
+          <div className="flex items-center justify-between border-b border-neutral-200 dark:border-white/[0.08] pb-2 mb-2.5 font-mono">
+            <span className="font-semibold text-neutral-900 dark:text-neutral-200 tracking-tight">{hoveredDay.day.periodKey}</span>
             <span
               className={`px-2 py-0.5 rounded-full text-[9px] font-semibold tracking-wider uppercase ${
                 hoveredDay.day.status === 'COMPLETED'
-                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shadow-[0_0_8px_rgba(52,211,153,0.4)]'
+                  ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/40 shadow-[0_0_8px_rgba(52,211,153,0.4)]'
                   : hoveredDay.day.status === 'MISSED'
-                  ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40'
+                  ? 'bg-rose-500/20 text-rose-700 dark:text-rose-400 border border-rose-500/40'
                   : hoveredDay.day.status === 'IN_PROGRESS'
-                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-[0_0_8px_rgba(245,158,11,0.4)]'
-                  : 'bg-white/[0.05] text-neutral-400 border border-white/[0.06]'
+                  ? 'bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/40 shadow-[0_0_8px_rgba(245,158,11,0.4)]'
+                  : 'bg-neutral-100 dark:bg-white/[0.05] text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-white/[0.06]'
               }`}
             >
               {hoveredDay.day.status}
@@ -410,32 +410,32 @@ export const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({
 
           {/* Telemetry Metrics Breakdown */}
           <div className="space-y-1.5 font-mono text-[11px]">
-            <div className="flex justify-between text-neutral-400">
+            <div className="flex justify-between text-neutral-500 dark:text-neutral-400">
               <span>Required Target:</span>
-              <span className="font-semibold text-neutral-100 tabular-nums">
+              <span className="font-semibold text-neutral-900 dark:text-neutral-100 tabular-nums">
                 {hoveredDay.day.targetValue} {targetUnit}
               </span>
             </div>
-            <div className="flex justify-between text-neutral-400">
+            <div className="flex justify-between text-neutral-500 dark:text-neutral-400">
               <span>Recorded Progress:</span>
               <span
                 className={`font-semibold tabular-nums ${
                   hoveredDay.day.completedValue >= hoveredDay.day.targetValue
-                    ? 'text-emerald-400'
-                    : 'text-neutral-100'
+                    ? 'text-emerald-600 dark:text-emerald-400'
+                    : 'text-neutral-900 dark:text-neutral-100'
                 }`}
               >
                 {hoveredDay.day.completedValue} {targetUnit}
               </span>
             </div>
-            <div className="flex justify-between text-neutral-500 text-[10px] pt-1 border-t border-white/[0.05]">
+            <div className="flex justify-between text-neutral-500 text-[10px] pt-1 border-t border-neutral-200 dark:border-white/[0.05]">
               <span>Verification Protocol:</span>
-              <span className="text-emerald-400 font-medium">Witness Signed</span>
+              <span className="text-emerald-600 dark:text-emerald-400 font-medium">Witness Signed</span>
             </div>
           </div>
 
           {(hoveredDay.day as any).proofNote && (
-            <div className="mt-2.5 pt-2 border-t border-white/[0.06] text-[10px] text-neutral-300 italic line-clamp-2">
+            <div className="mt-2.5 pt-2 border-t border-neutral-200 dark:border-white/[0.06] text-[10px] text-neutral-600 dark:text-neutral-300 italic line-clamp-2">
               "{(hoveredDay.day as any).proofNote}"
             </div>
           )}

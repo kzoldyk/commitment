@@ -196,15 +196,15 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
-      className="fixed inset-0 z-[100] flex items-start justify-center pt-24 sm:pt-28 px-4 bg-black/80 backdrop-blur-2xl animate-in fade-in duration-150"
+      className="fixed inset-0 z-[100] flex items-start justify-center pt-24 sm:pt-28 px-4 bg-neutral-900/40 dark:bg-black/80 backdrop-blur-2xl animate-in fade-in duration-150"
     >
       <div
-        className="w-full max-w-2xl antigravity-spotlight shadow-[0_30px_90px_rgba(0,0,0,0.95)] overflow-hidden text-[#111827] dark:text-[#f9fafb] select-none animate-in zoom-in-95 duration-150"
+        className="w-full max-w-2xl antigravity-spotlight shadow-[0_20px_50px_rgba(0,0,0,0.12)] dark:shadow-[0_30px_90px_rgba(0,0,0,0.95)] overflow-hidden text-[#111827] dark:text-[#f9fafb] select-none animate-in zoom-in-95 duration-150"
         role="dialog"
         aria-modal="true"
       >
         {/* Ambient Top Glow Line */}
-        <div className="h-px w-full bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-neutral-300 dark:via-white/20 to-transparent" />
 
         {/* Seamless Antigravity Spotlight Search Header */}
         <div className="flex items-center px-5 py-4 border-b border-neutral-200 dark:border-white/[0.07] gap-3.5 bg-transparent">
@@ -219,7 +219,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
             }}
             onKeyDown={handleKeyDown}
             placeholder="Type a command or search covenants..."
-            className="w-full bg-transparent border-0 outline-none ring-0 focus:ring-0 focus:outline-none shadow-none text-base sm:text-[17px] font-sans text-[#111827] dark:text-[#f9fafb] placeholder:text-neutral-500 tracking-tight p-0"
+            className="w-full bg-transparent border-0 outline-none ring-0 focus:ring-0 focus:outline-none shadow-none text-base sm:text-[17px] font-sans text-[#111827] dark:text-[#f9fafb] placeholder:text-neutral-400 dark:placeholder:text-neutral-500 tracking-tight p-0"
             style={{ border: 'none', outline: 'none', boxShadow: 'none' }}
           />
           <div className="flex items-center gap-1.5 shrink-0">
@@ -251,8 +251,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
                     <div
                       className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all icon-badge-3d ${
                         isSelected
-                          ? 'border-white/[0.25] shadow-[0_0_12px_rgba(255,255,255,0.15)] text-white'
-                          : 'text-neutral-400'
+                          ? 'border-neutral-300 dark:border-white/[0.25] shadow-xs text-neutral-900 dark:text-white'
+                          : 'text-neutral-500 dark:text-neutral-400'
                       }`}
                     >
                       <Icon size={16} className="icon-3d" />
@@ -262,7 +262,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
                         <p className="text-[13px] font-medium text-[#111827] dark:text-[#f9fafb] leading-tight truncate">
                           {cmd.title}
                         </p>
-                        <span className="text-[10px] font-mono uppercase px-1.5 py-0.2 rounded bg-white/[0.04] text-neutral-500 border border-white/[0.05]">
+                        <span className="text-[10px] font-mono uppercase px-1.5 py-0.2 rounded bg-neutral-100 dark:bg-white/[0.04] text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-white/[0.05]">
                           {cmd.category}
                         </span>
                       </div>

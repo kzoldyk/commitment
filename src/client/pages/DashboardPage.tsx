@@ -262,7 +262,7 @@ export const DashboardPage: React.FC = () => {
       )}
 
       {/* Unified Telemetry KPI Instrument Panel (No double-boxing or heavy cards) */}
-      <div className="antigravity-capsule grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-white/[0.06] p-1.5 shadow-xl">
+      <div className="antigravity-capsule grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-neutral-200/80 dark:divide-white/[0.06] p-1.5 shadow-xl">
         <div className="p-4 flex flex-col justify-between">
           <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-400 dark:text-[#8a8f98] block mb-1">
             Active Contracts
@@ -437,7 +437,7 @@ export const DashboardPage: React.FC = () => {
                       </p>
                     </div>
 
-                    <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-lg bg-white/[0.04] text-neutral-400 border border-white/[0.06] shrink-0">
+                    <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-lg bg-neutral-100 dark:bg-white/[0.04] text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-white/[0.06] shrink-0">
                       {c.isCreator ? `@${c.partner?.username}` : `@${c.creator?.username}`}
                     </span>
                   </div>
