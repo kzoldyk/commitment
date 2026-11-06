@@ -13,7 +13,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [theme, setTheme] = useState<Theme>(() => {
     const saved = localStorage.getItem('commitment_theme') as Theme;
     if (saved === 'light' || saved === 'dark') return saved;
-    return 'dark'; // Dark mode first default
+    return 'light'; // Default light mode for all users
   });
 
   useEffect(() => {

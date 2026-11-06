@@ -1,439 +1,306 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowRight,
-  Flame,
   Shield,
-  Coins,
-  CheckCircle2,
   Users,
   Clock,
-  Sparkles,
+  Coins,
+  Flame,
+  CheckCircle2,
+  AlertTriangle,
   LayoutDashboard,
   Plus,
-  RefreshCw,
-  AlertTriangle,
-  RotateCcw,
+  HelpCircle,
 } from 'lucide-react';
 import { useAuth } from '../lib/auth-context';
-import { MacWindow } from '../components/MacWindow';
-import { LivesIndicator } from '../components/LivesIndicator';
-import { StreakBadge } from '../components/StreakBadge';
+import { HairlineCovenantMachine } from '../components/HairlineCovenantMachine';
+import { CovenantCommandCenter } from '../components/CovenantCommandCenter';
 
 export const LandingPage: React.FC = () => {
   const { user } = useAuth();
 
-  // Interactive Contract Simulator State
-  const [simPreset, setSimPreset] = useState<'leetcode' | 'running' | 'reading' | 'writing'>('leetcode');
-  const [simInitialLives, setSimInitialLives] = useState(3);
-  const [simCurrentLives, setSimCurrentLives] = useState(3);
-  const [simStakeAmount, setSimStakeAmount] = useState(500);
-  const [simStakeEnabled, setSimStakeEnabled] = useState(true);
-  const [simDebt, setSimDebt] = useState(0);
-  const [simMissedCount, setSimMissedCount] = useState(0);
-
-  const presets = {
-    leetcode: { title: 'Solve 2 LeetCode problems', target: '2 problems', cadence: 'Daily' },
-    running: { title: 'Run 5 kilometers', target: '5 km', cadence: 'Daily' },
-    reading: { title: 'Read 20 pages', target: '20 pages', cadence: 'Daily' },
-    writing: { title: 'Write 500 words of engineering notes', target: '500 words', cadence: 'Daily' },
-  };
-
-  const handleSimMiss = () => {
-    if (simCurrentLives > 0) {
-      setSimCurrentLives((prev) => Math.max(0, prev - 1));
-      if (simStakeEnabled) {
-        setSimDebt((prev) => prev + simStakeAmount);
-      }
-      setSimMissedCount((prev) => prev + 1);
-    }
-  };
-
-  const handleSimReset = () => {
-    setSimCurrentLives(simInitialLives);
-    setSimDebt(0);
-    setSimMissedCount(0);
-  };
-
   return (
-    <div className="relative min-h-[calc(100vh-3rem)] flex flex-col justify-between overflow-hidden bg-[#f7f8f9] dark:bg-[#07080b] text-[#111827] dark:text-[#f9fafb] transition-colors duration-200">
-      {/* Background Architectural Grid & Subtle Radial Atmospheric Glow */}
+    <div className="relative min-h-[calc(100vh-3.5rem)] flex flex-col justify-between overflow-x-hidden bg-[#f7f8f9] dark:bg-[#07080b] text-[#111827] dark:text-[#f9fafb] transition-colors duration-200">
+      {/* Background Architectural Grid & Subtle Radial Atmosphere */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1100px] h-[550px] bg-gradient-to-b from-blue-500/10 via-indigo-500/5 to-transparent blur-[140px] -z-10 pointer-events-none rounded-full" />
       <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.03)_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] -z-10 opacity-30" />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-12 pb-24">
-        {/* ================= HERO SECTION: EDITORIAL SPLIT ================= */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center pb-20 border-b border-neutral-200 dark:border-white/[0.08]">
-          {/* Left Column: Editorial Value Proposition */}
-          <div className="lg:col-span-6 space-y-6 text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-neutral-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.04] text-xs text-neutral-600 dark:text-[#8a8f98] shadow-xs backdrop-blur-md">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
-              <span>Accountability covenant engine</span>
-            </div>
-
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-[#111827] dark:text-[#f9fafb] leading-[1.1]">
-              <span className="sr-only">commitment</span>Commitment: Promises broken in private. Sealed and kept in public.
-            </h1>
-
-            <p className="text-base sm:text-lg text-neutral-600 dark:text-[#8a8f98] max-w-xl leading-relaxed">
-              Most habit trackers fail because nothing happens when you quietly give up.
-              Commitment binds your execution to a witnessed pact with finite lives, midnight local cutoffs, and real financial stakes.
-            </p>
-
-            {/* CTAs */}
-            <div className="flex flex-wrap items-center gap-3 pt-2">
-              {user ? (
-                <>
-                  <Link
-                    to="/dashboard"
-                    className="mac-btn-primary px-5 py-2.5 rounded-md font-medium text-sm flex items-center gap-2"
-                  >
-                    <LayoutDashboard size={15} />
-                    <span>Go to dashboard</span>
-                    <ArrowRight size={15} />
-                  </Link>
-                  <Link
-                    to="/create"
-                    className="mac-btn-secondary px-5 py-2.5 rounded-md font-medium text-sm flex items-center gap-2"
-                  >
-                    <Plus size={15} className="text-neutral-500 dark:text-[#8a8f98]" />
-                    <span>New contract</span>
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <Link
-                    to="/register"
-                    className="mac-btn-primary px-6 py-2.5 rounded-md font-medium text-sm flex items-center gap-2"
-                  >
-                    <span>Create contract</span>
-                    <ArrowRight size={15} />
-                  </Link>
-                  <Link
-                    to="/login"
-                    className="mac-btn-secondary px-6 py-2.5 rounded-md font-medium text-sm flex items-center gap-2"
-                  >
-                    <span>Sign in to dashboard</span>
-                  </Link>
-                </>
-              )}
-            </div>
-
-            {/* Trust Signal Pillars */}
-            <div className="pt-4 grid grid-cols-3 gap-4 border-t border-neutral-200 dark:border-white/10 text-xs font-mono text-neutral-500 dark:text-neutral-400">
-              <div>
-                <span className="font-bold text-neutral-900 dark:text-white block font-sans text-sm">Finite lives</span>
-                <span>Terminates at 0</span>
-              </div>
-              <div>
-                <span className="font-bold text-neutral-900 dark:text-white block font-sans text-sm">Midnight cutoff</span>
-                <span>Automated evaluation</span>
-              </div>
-              <div>
-                <span className="font-bold text-neutral-900 dark:text-white block font-sans text-sm">Real stakes</span>
-                <span>Debt owed to witness</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Column: Live Interactive Contract Simulator (Antigravity Glassmorphism) */}
-          <div className="lg:col-span-6 w-full">
-            <div className="antigravity-capsule rounded-3xl p-6 sm:p-7 relative overflow-hidden select-none">
-              {/* Internal ambient illumination spot */}
-              <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-80 h-40 bg-gradient-to-b from-blue-500/15 via-indigo-500/5 to-transparent blur-3xl pointer-events-none rounded-full" />
-
-              {/* Capsule Header */}
-              <div className="flex items-center justify-between pb-4 border-b border-neutral-200 dark:border-white/[0.06] relative z-10">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-6 h-6 rounded-lg icon-badge-3d text-amber-400">
-                    <Sparkles size={13} className="icon-3d" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-semibold tracking-tight text-[#111827] dark:text-[#f9fafb]">
-                      Contract Simulator
-                    </h3>
-                    <p className="text-[10px] font-mono text-neutral-400 dark:text-[#626670]">
-                      Interactive Enforcement Sandbox
-                    </p>
-                  </div>
-                </div>
-
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-neutral-100 dark:bg-white/[0.04] border border-neutral-200 dark:border-white/[0.06] text-[10px] font-mono text-neutral-500 dark:text-[#8a8f98]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.5)]" />
-                  <span>Real-time engine</span>
-                </div>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-2 sm:pt-4 pb-16">
+        {/* ================= HERO: FITS 100% IN ONE VIEWPORT (BORDER-FREE) ================= */}
+        <div className="min-h-[calc(100vh-4.5rem)] flex items-center py-4">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+            {/* Left Column: Human Psychological Value Proposition */}
+            <div className="lg:col-span-6 space-y-4 sm:space-y-5 text-left">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-200/50 dark:bg-white/[0.06] text-xs text-neutral-600 dark:text-[#8a8f98] shadow-xs backdrop-blur-md">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
+                <span>Real accountability with people you know</span>
               </div>
 
-              <div className="space-y-6 pt-5 relative z-10">
-                {/* 1. Discipline Segmented Control (Fluid Segment, No Heavy Double Boxing) */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs font-mono">
-                    <span className="text-neutral-400">
-                      1. Select Commitment Discipline
-                    </span>
-                    <span className="text-[10px] text-neutral-500 font-mono">
-                      Tap discipline to test
-                    </span>
-                  </div>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#111827] dark:text-[#f9fafb] leading-[1.15]">
+                Stop breaking promises to yourself.
+              </h1>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-1 p-1 rounded-xl bg-black/40 border border-white/[0.06]">
-                    {(['leetcode', 'running', 'reading', 'writing'] as const).map((key) => {
-                      const isSelected = simPreset === key;
-                      return (
-                        <button
-                          key={key}
-                          type="button"
-                          onClick={() => {
-                            setSimPreset(key);
-                            handleSimReset();
-                          }}
-                          className={`py-2 px-2.5 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer text-center ${
-                            isSelected
-                              ? 'bg-white/[0.12] text-white border border-white/[0.14] shadow-sm font-semibold'
-                              : 'text-neutral-400 hover:text-white hover:bg-white/[0.03] border border-transparent'
-                          }`}
-                        >
-                          {key === 'leetcode' ? 'LeetCode' : key.charAt(0).toUpperCase() + key.slice(1)}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
+              <p className="text-xs sm:text-sm md:text-base text-neutral-600 dark:text-[#8a8f98] max-w-xl leading-relaxed">
+                When nobody is watching, giving up at 11:30 PM is easy. Commitment puts your daily habit, a friend you respect, and real money on the line. If you don't submit proof before midnight, your friend gets a text—and your cash.
+              </p>
 
-                {/* 2. Parameters (Lives & Penalty Stake) */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-3 border-y border-white/[0.05]">
-                  <div>
-                    <span className="block text-[11px] font-mono text-neutral-400 mb-1.5">
-                      Initial lives: <strong className="text-white font-semibold">{simInitialLives}</strong>
-                    </span>
-                    <div className="inline-flex items-center gap-1 p-0.5 rounded-lg bg-black/40 border border-white/[0.06]">
-                      {[1, 2, 3, 5].map((num) => (
-                        <button
-                          key={num}
-                          type="button"
-                          onClick={() => {
-                            setSimInitialLives(num);
-                            setSimCurrentLives(num);
-                            setSimDebt(0);
-                          }}
-                          className={`w-7 h-6 rounded-md text-xs font-mono font-medium transition-colors cursor-pointer flex items-center justify-center ${
-                            simInitialLives === num
-                              ? 'bg-white/[0.15] text-white shadow-xs border border-white/[0.15]'
-                              : 'text-neutral-500 hover:text-white'
-                          }`}
-                        >
-                          {num}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <span className="block text-[11px] font-mono text-neutral-400 mb-1.5">
-                      Penalty stake per miss:
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const next = simStakeAmount === 250 ? 500 : simStakeAmount === 500 ? 1000 : 250;
-                        setSimStakeAmount(next);
-                        setSimDebt(0);
-                      }}
-                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-500/10 border border-amber-500/25 text-xs font-mono font-medium text-amber-300 hover:bg-amber-500/20 transition-all cursor-pointer shadow-[0_0_8px_rgba(245,158,11,0.15)]"
+              {/* CTAs */}
+              <div className="flex flex-wrap items-center gap-3 pt-1">
+                {user ? (
+                  <>
+                    <Link
+                      to="/dashboard"
+                      className="mac-btn-primary px-5 py-2.5 rounded-xl font-medium text-xs sm:text-sm flex items-center gap-2"
                     >
-                      <Coins size={12} />
-                      <span>₹{simStakeAmount} / miss ▾</span>
-                    </button>
-                  </div>
+                      <LayoutDashboard size={14} />
+                      <span>Open my dashboard</span>
+                      <ArrowRight size={14} />
+                    </Link>
+                    <Link
+                      to="/create"
+                      className="mac-btn-secondary px-5 py-2.5 rounded-xl font-medium text-xs sm:text-sm flex items-center gap-2"
+                    >
+                      <Plus size={14} className="text-neutral-500 dark:text-[#8a8f98]" />
+                      <span>Create a pact</span>
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      to="/register"
+                      className="mac-btn-primary px-6 py-2.5 rounded-xl font-medium text-xs sm:text-sm flex items-center gap-2"
+                    >
+                      <span>Start my first commitment</span>
+                      <ArrowRight size={14} />
+                    </Link>
+                    <Link
+                      to="/login"
+                      className="mac-btn-secondary px-6 py-2.5 rounded-xl font-medium text-xs sm:text-sm flex items-center gap-2"
+                    >
+                      <span>Sign in</span>
+                    </Link>
+                  </>
+                )}
+              </div>
+
+              {/* Human Proof Pillars (Border-free) */}
+              <div className="pt-2 grid grid-cols-3 gap-3 p-3 rounded-2xl bg-white/40 dark:bg-white/[0.03] text-xs font-mono text-neutral-500 dark:text-neutral-400">
+                <div>
+                  <span className="font-bold text-neutral-900 dark:text-white block font-sans text-sm">3 Lives</span>
+                  <span>Terminates at 0</span>
                 </div>
-
-                {/* 3. Live Real-Time Contract Preview (Integrated Fluid Glass) */}
-                <div className="space-y-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 flex items-center gap-1.5 font-semibold">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] animate-pulse" />
-                        Live Covenant Terms
-                      </span>
-                      <h4 className="text-base font-semibold text-[#111827] dark:text-[#f9fafb] mt-0.5 tracking-tight">
-                        {presets[simPreset].title}
-                      </h4>
-                    </div>
-                    <StreakBadge streak={14} size="sm" />
-                  </div>
-
-                  {/* Vitals Telemetry Row */}
-                  <div className="grid grid-cols-2 gap-3 p-3.5 rounded-xl bg-black/40 border border-white/[0.05]">
-                    <div>
-                      <span className="text-[10px] text-neutral-400 font-mono uppercase tracking-wider block mb-1">
-                        Contract Vitality
-                      </span>
-                      <LivesIndicator currentLives={simCurrentLives} maxLives={simInitialLives} size="sm" />
-                      {simCurrentLives === 0 && (
-                        <span className="text-[10px] font-mono text-rose-400 font-semibold block mt-1">
-                          ✖ Covenant Terminated
-                        </span>
-                      )}
-                    </div>
-
-                    <div>
-                      <span className="text-[10px] text-neutral-400 font-mono uppercase tracking-wider block mb-0.5">
-                        Witness Debt Counter
-                      </span>
-                      <span
-                        className={`text-xl font-mono font-bold tabular-nums tracking-tight ${
-                          simDebt > 0
-                            ? 'text-rose-400 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]'
-                            : 'text-[#111827] dark:text-[#f9fafb]'
-                        }`}
-                      >
-                        ₹{simDebt.toLocaleString()}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Rule Logic Telemetry Lines */}
-                  <div className="text-[11px] font-mono space-y-1.5 text-neutral-400 pt-1">
-                    <p className="flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-blue-400/60 shrink-0" />
-                      <span>Target: <strong className="text-neutral-200 font-medium">{presets[simPreset].target}</strong> before 00:00 midnight cutoff.</span>
-                    </p>
-                    <p className="flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-rose-400/60 shrink-0" />
-                      <span>Miss cutoff: deduct 1 life & accumulate +₹{simStakeAmount} partner debt.</span>
-                    </p>
-                    <p className="flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/60 shrink-0" />
-                      <span>Streak 5 consecutive days to restore +1 life (cap: {simInitialLives}).</span>
-                    </p>
-                  </div>
+                <div>
+                  <span className="font-bold text-neutral-900 dark:text-white block font-sans text-sm">A Real Friend</span>
+                  <span>Gets notified if you miss</span>
                 </div>
-
-                {/* 4. Action Buttons (3D Tactile Plasma Trigger & Glass Capsule) */}
-                <div className="flex items-center justify-between gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={handleSimMiss}
-                    disabled={simCurrentLives === 0}
-                    className="element-3d px-4 py-2.5 rounded-xl text-xs font-medium flex items-center gap-2 transition-all cursor-pointer bg-gradient-to-b from-rose-500/25 to-rose-600/15 hover:from-rose-500/35 hover:to-rose-600/25 text-rose-200 border border-rose-400/40 shadow-[0_4px_12px_rgba(244,63,94,0.3),inset_0_1px_0_0_rgba(255,255,255,0.3),inset_0_-1px_0_0_rgba(0,0,0,0.5)] disabled:opacity-40 disabled:cursor-not-allowed"
-                  >
-                    <AlertTriangle size={13} className="text-rose-400" />
-                    <span>Test Missed Cutoff</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={handleSimReset}
-                    className="element-3d px-3.5 py-2 rounded-xl text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer bg-gradient-to-b from-white/[0.08] to-white/[0.02] hover:from-white/[0.12] hover:to-white/[0.04] text-neutral-300 hover:text-white border border-white/[0.1] shadow-[0_2px_6px_rgba(0,0,0,0.4),inset_0_1px_0_0_rgba(255,255,255,0.2),inset_0_-1px_0_0_rgba(0,0,0,0.4)]"
-                  >
-                    <RotateCcw size={12} />
-                    <span>Reset Simulator</span>
-                  </button>
+                <div>
+                  <span className="font-bold text-neutral-900 dark:text-white block font-sans text-sm">Real Stakes</span>
+                  <span>Owed directly to them</span>
                 </div>
               </div>
+            </div>
+
+            {/* Right Column: Unified Borderless Animated Covenant Machine */}
+            <div className="lg:col-span-6 w-full flex justify-center">
+              <HairlineCovenantMachine />
             </div>
           </div>
         </div>
 
-        {/* ================= EDITORIAL MANIFESTO SECTION (T5.2) ================= */}
-        <div className="py-24 max-w-5xl mx-auto space-y-12">
-          <div className="text-center space-y-3">
-            <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
-              The architecture of follow-through
+        {/* ================= SECTION 1: THE REAL HUMAN PSYCHOLOGY ================= */}
+        <div className="py-20 max-w-5xl mx-auto space-y-10">
+          <div className="text-center space-y-2">
+            <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider font-mono">
+              The Psychology of Follow-Through
             </span>
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-neutral-900 dark:text-white">
-              Solo resolutions versus witnessed pacts
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 dark:text-white">
+              Why willpower fails, but peer accountability works every time
             </h2>
-            <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
-              Why 92% of personal resolutions evaporate by February, and how deterministic contracts change your psychology.
+            <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 max-w-xl mx-auto">
+              We don't fail because we lack ambition. We fail because nobody notices when we quit.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
-            {/* Solo Resolutions Card */}
-            <div className="p-6 sm:p-8 rounded-2xl border border-black/[0.08] dark:border-white/10 bg-white/70 dark:bg-neutral-900/60 backdrop-blur-md space-y-5">
+            {/* The Private Promise Card (Border-free) */}
+            <div className="p-6 sm:p-7 rounded-3xl bg-white/70 dark:bg-neutral-900/60 shadow-xl shadow-black/20 backdrop-blur-md space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-neutral-500">
-                  Solo resolution
+                  The Private Resolution
                 </span>
-                <span className="text-xs font-mono text-rose-500">Fragile willpower</span>
+                <span className="text-xs font-mono text-rose-500 font-medium">Silent excuses</span>
               </div>
 
-              <h3 className="text-xl font-bold text-neutral-900 dark:text-white tracking-tight">
-                Made in secret, broken in silence.
+              <h3 className="text-lg font-bold text-neutral-900 dark:text-white tracking-tight">
+                Made in secret. Broken in silence.
               </h3>
 
               <ul className="space-y-3 text-xs sm:text-sm text-neutral-600 dark:text-neutral-400">
                 <li className="flex items-start gap-2.5">
                   <span className="text-rose-500 font-bold shrink-0">✕</span>
-                  <span><strong>Zero real consequence:</strong> When you skip a day, no alarm sounds and no one notices.</span>
+                  <span><strong>The 11:30 PM negotiation:</strong> You're tired in bed. You whisper "I'll do double tomorrow." Tomorrow never comes.</span>
                 </li>
                 <li className="flex items-start gap-2.5">
                   <span className="text-rose-500 font-bold shrink-0">✕</span>
-                  <span><strong>Silent rationalization:</strong> "I worked hard today, I'll do double tomorrow." Tomorrow never arrives.</span>
+                  <span><strong>Zero embarrassment:</strong> When you skip a day, no alarm sounds. Nobody knows you quit except you.</span>
                 </li>
                 <li className="flex items-start gap-2.5">
                   <span className="text-rose-500 font-bold shrink-0">✕</span>
-                  <span><strong>Passive tracking apps:</strong> Graphs that turn gray without penalizing abandonment.</span>
+                  <span><strong>Useless habit apps:</strong> Graphs that turn gray without penalizing abandonment.</span>
                 </li>
               </ul>
             </div>
 
-            {/* Witnessed Pact Card */}
-            <div className="p-6 sm:p-8 rounded-2xl border border-[#c81e28]/30 dark:border-[#c81e28]/40 bg-rose-50/20 dark:bg-[#c81e28]/5 backdrop-blur-md space-y-5 shadow-lg">
+            {/* The Witnessed Pact Card (Border-free) */}
+            <div className="p-6 sm:p-7 rounded-3xl bg-emerald-50/30 dark:bg-emerald-500/[0.06] shadow-xl shadow-emerald-950/20 backdrop-blur-md space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-[#c81e28]">
-                  Witnessed pact
+                <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+                  The Witnessed Pact
                 </span>
-                <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400">
-                  Deterministic system
+                <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-medium">
+                  Real consequence
                 </span>
               </div>
 
-              <h3 className="text-xl font-bold text-neutral-900 dark:text-white tracking-tight">
-                Written in code, enforced by schedule.
+              <h3 className="text-lg font-bold text-neutral-900 dark:text-white tracking-tight">
+                Sealed with a friend. Enforced by code.
               </h3>
 
               <ul className="space-y-3 text-xs sm:text-sm text-neutral-700 dark:text-neutral-300">
                 <li className="flex items-start gap-2.5">
                   <span className="text-emerald-600 dark:text-emerald-400 font-bold shrink-0">✓</span>
-                  <span><strong>Designated witness:</strong> A real peer with full visibility into every proof submission.</span>
+                  <span><strong>Your friend is watching:</strong> A real peer holds the keys. You cannot quietly click "cancel" when you feel lazy.</span>
                 </li>
                 <li className="flex items-start gap-2.5">
                   <span className="text-emerald-600 dark:text-emerald-400 font-bold shrink-0">✓</span>
-                  <span><strong>Finite life system:</strong> Miss midnight cutoff and lose a life. Reach zero and the pact terminates.</span>
+                  <span><strong>Cash on the line:</strong> Miss the midnight deadline and your friend gets an instant notification—and your ₹500.</span>
                 </li>
                 <li className="flex items-start gap-2.5">
                   <span className="text-emerald-600 dark:text-emerald-400 font-bold shrink-0">✓</span>
-                  <span><strong>Real skin in the game:</strong> Automatic financial debt ledger payable directly to your partner.</span>
+                  <span><strong>Finite life system:</strong> You start with 3 lives. Burn all 3 and the pact permanently dies in public failure.</span>
                 </li>
               </ul>
             </div>
           </div>
         </div>
 
-        {/* ================= 3 CORE PILLARS ================= */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto text-left pt-6">
-          <MacWindow title="Finite lives" icon={<Shield size={14} className="text-rose-500" />}>
-            <h4 className="font-bold text-sm text-neutral-900 dark:text-white mb-1.5">Finite contract lives</h4>
-            <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">
-              Every contract holds 1 to 5 lives. Miss a daily cutoff and you lose a life. Reach zero and your contract terminates in irreversible failure.
+        {/* ================= SECTION 2: COVENANT COMMAND CENTER ================= */}
+        <div className="py-12 max-w-6xl mx-auto space-y-6">
+          <div className="text-center space-y-2">
+            <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider font-mono">
+              Live Contract OS
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 dark:text-white">
+              Covenant Command Center
+            </h2>
+            <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 max-w-xl mx-auto">
+              What an active commitment looks like: unbroken streak trajectory, real-time midnight countdown, and witness debt tracking in one panoramic card.
             </p>
-          </MacWindow>
+          </div>
 
-          <MacWindow title="Witness verification" icon={<Users size={14} className="text-amber-500" />}>
-            <h4 className="font-bold text-sm text-neutral-900 dark:text-white mb-1.5">No self-approval</h4>
-            <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">
-              Your designated witness must accept the pact. They receive instant notifications when you miss, keeping you honest.
-            </p>
-          </MacWindow>
+          <CovenantCommandCenter />
+        </div>
 
-          <MacWindow title="Automated cutoff engine" icon={<Clock size={14} className="text-emerald-500" />}>
-            <h4 className="font-bold text-sm text-neutral-900 dark:text-white mb-1.5">Automated timezone evaluation</h4>
-            <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">
-              No manual verification required. Scheduled background workers evaluate deadlines against your local timezone automatically.
-            </p>
-          </MacWindow>
+        {/* ================= SECTION 3: 3 DEAD-SIMPLE STEPS ================= */}
+        <div className="py-16 max-w-5xl mx-auto space-y-10">
+          <div className="text-center space-y-2">
+            <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider font-mono">
+              How It Works
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 dark:text-white">
+              Three steps to keep a promise
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+            <div className="p-5 rounded-3xl bg-white/70 dark:bg-[#0c0d12]/70 shadow-lg shadow-black/10 backdrop-blur-md space-y-2">
+              <span className="w-7 h-7 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 font-mono font-bold text-xs flex items-center justify-center">
+                01
+              </span>
+              <h4 className="text-sm font-bold text-neutral-900 dark:text-white">Pick your daily habit</h4>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">
+                Choose a concrete target: solve 2 LeetCode problems, run 5km, or write 500 words. Set 3 finite lives and a penalty (e.g. ₹500).
+              </p>
+            </div>
+
+            <div className="p-5 rounded-3xl bg-white/70 dark:bg-[#0c0d12]/70 shadow-lg shadow-black/10 backdrop-blur-md space-y-2">
+              <span className="w-7 h-7 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 font-mono font-bold text-xs flex items-center justify-center">
+                02
+              </span>
+              <h4 className="text-sm font-bold text-neutral-900 dark:text-white">Invite someone you respect</h4>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">
+                Send a link to a friend or coworker. They accept and become your witness. No self-forgiveness or secret rollbacks allowed.
+              </p>
+            </div>
+
+            <div className="p-5 rounded-3xl bg-white/70 dark:bg-[#0c0d12]/70 shadow-lg shadow-black/10 backdrop-blur-md space-y-2">
+              <span className="w-7 h-7 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-mono font-bold text-xs flex items-center justify-center">
+                03
+              </span>
+              <h4 className="text-sm font-bold text-neutral-900 dark:text-white">Show up before midnight or pay</h4>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">
+                LeetCode syncs automatically via API. For other habits, upload proof. If you miss midnight, your friend gets an instant text and your cash.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ================= SECTION 4: HONEST HUMAN FAQ ================= */}
+        <div className="py-12 max-w-3xl mx-auto space-y-8">
+          <div className="text-center space-y-2">
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">
+              Common questions
+            </h2>
+          </div>
+
+          <div className="space-y-4 text-left text-xs sm:text-sm">
+            <div className="p-4 rounded-2xl bg-white/70 dark:bg-[#0c0d12]/70 shadow-md shadow-black/10 backdrop-blur-md space-y-1">
+              <strong className="text-neutral-900 dark:text-white font-semibold block">
+                Does Commitment take my money?
+              </strong>
+              <p className="text-neutral-600 dark:text-neutral-400 text-xs leading-relaxed">
+                No. Debts are owed directly between you and your witness via UPI or bank transfer. We never hold your funds or take a percentage.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-white/70 dark:bg-[#0c0d12]/70 shadow-md shadow-black/10 backdrop-blur-md space-y-1">
+              <strong className="text-neutral-900 dark:text-white font-semibold block">
+                What if an emergency happens and I miss a day?
+              </strong>
+              <p className="text-neutral-600 dark:text-neutral-400 text-xs leading-relaxed">
+                That's why you start with 3 lives. Missing a day costs one life. If you bounce back and maintain a 5-day continuous streak, you earn a life back.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-white/70 dark:bg-[#0c0d12]/70 shadow-md shadow-black/10 backdrop-blur-md space-y-1">
+              <strong className="text-neutral-900 dark:text-white font-semibold block">
+                How does LeetCode verification work?
+              </strong>
+              <p className="text-neutral-600 dark:text-neutral-400 text-xs leading-relaxed">
+                Fully automated. We check LeetCode's public API at your local midnight cutoff. You don't need to manually upload screenshots.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ================= FINAL CALL TO ACTION ================= */}
+        <div className="py-16 text-center max-w-xl mx-auto space-y-4">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 dark:text-white">
+            Ready to keep a promise for once?
+          </h2>
+          <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400">
+            It takes 60 seconds to pick a goal and invite a friend.
+          </p>
+          <div className="pt-2">
+            <Link
+              to={user ? "/create" : "/register"}
+              className="mac-btn-primary px-7 py-3 rounded-xl font-medium text-sm inline-flex items-center gap-2 shadow-sm"
+            >
+              <span>{user ? "Create a contract" : "Start with 3 free lives"}</span>
+              <ArrowRight size={15} />
+            </Link>
+          </div>
         </div>
       </main>
 

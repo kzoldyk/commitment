@@ -24,6 +24,7 @@ import { LivesIndicator } from '../components/LivesIndicator';
 import { StreakBadge } from '../components/StreakBadge';
 import { ProofModal } from '../components/ProofModal';
 import { ConfirmModal } from '../components/ConfirmModal';
+import { MidnightCutoffHorizon } from '../components/MidnightCutoffHorizon';
 
 export const DashboardPage: React.FC = () => {
   const { user } = useAuth();
@@ -308,6 +309,16 @@ export const DashboardPage: React.FC = () => {
         </div>
       </div>
 
+      {/* Midnight Cutoff Horizon Instrument */}
+      <MidnightCutoffHorizon
+        commitments={data?.activeCommitments || []}
+        todayDate={data?.todayDate || ''}
+        userTimezone={data?.userTimezone || ''}
+        onOpenProofModal={(day, commitment) => setSelectedProofDay({ day, commitment })}
+        onTriggerEvaluation={handleRunEvaluation}
+        isEvaluating={evaluating}
+      />
+
       {/* Incoming Requests Section (if any) */}
       {pendingIncoming.length > 0 && (
         <div className="space-y-3">
@@ -470,7 +481,7 @@ export const DashboardPage: React.FC = () => {
                         <>
                           <div className="w-px h-3.5 bg-neutral-200 dark:bg-white/[0.08]" />
                           <span className="text-[11px] font-mono text-neutral-400">
-                            {c.rule.stakeCurrency === 'INR' ? '₹' : c.rule.stakeCurrency}{c.rule.stakeAmount}/miss
+                            {c.rule?.stakeCurrency === 'INR' ? '₹' : c.rule?.stakeCurrency}{c.rule?.stakeAmount}/miss
                           </span>
                         </>
                       )}

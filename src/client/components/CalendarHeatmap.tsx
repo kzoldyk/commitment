@@ -434,9 +434,9 @@ export const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({
             </div>
           </div>
 
-          {hoveredDay.day.proofNote && (
+          {(hoveredDay.day as any).proofNote && (
             <div className="mt-2.5 pt-2 border-t border-white/[0.06] text-[10px] text-neutral-300 italic line-clamp-2">
-              "{hoveredDay.day.proofNote}"
+              "{(hoveredDay.day as any).proofNote}"
             </div>
           )}
         </div>
